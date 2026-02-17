@@ -1,0 +1,78 @@
+import {createClient} from '@sanity/client'
+import {basename} from 'path'
+import {createReadStream} from 'fs'
+
+const client = createClient({
+  projectId: '22t68kfp',
+  dataset: 'production',
+  useCdn: false,
+  apiVersion: '2024-02-17',
+  // Exec usually has access to a token if authenticated, but we'll see
+})
+
+async function uploadImage(filePath: string) {
+  console.log(`Uploading ${filePath}...`)
+  try {
+    const asset = await client.assets.upload('image', createReadStream(filePath), {
+      filename: basename(filePath)
+    })
+    return asset._id
+  } catch (err) {
+    console.error(`Failed to upload ${filePath}:`, err.message)
+    return null
+  }
+}
+
+async function seed() {
+  const img1 = await uploadImage('image1.jpg')
+  const img2 = await uploadImage('image2.jpg')
+  const img3 = await uploadImage('image3.jpg')
+  
+  const images = [img1, img2, img3].filter(Boolean) as string[]
+  
+  const categories = [
+    {_id: 'cat-cakes', _type: 'category', title: 'Cakes', description: 'Delicious cakes for all occasions.'},
+    {_id: 'cat-cookies', _type: 'category', title: 'Cookies', description: 'Crunchy and chewy cookies.'},
+    {_id: 'cat-sandwiches', _type: 'category', title: 'Sandwiches', description: 'Freshly made sandwiches.'},
+  ]
+
+  const people = [
+    {_id: 'person-bob', _type: 'person', name: 'Bob Baker', slug: {current: 'bob-baker'}, image: images[0] ? {asset: {_type: 'reference', _ref: images[0]}} : undefined},
+    {_id: 'person-alice', _type: 'person', name: 'Alice Icing', slug: {current: 'alice-icing'}, image: images[1] ? {asset: {_type: 'reference', _ref: images[1]}} : undefined},
+  ]
+
+  const locations = [
+    {_id: 'loc-east', _type: 'location', name: 'East Side Bakery', slug: {current: 'east-side'}, address: {street: '456 East Ave', city: 'Bakeville', state: 'CA', zip: '90211'}},
+    {_id: 'loc-west', _type: 'location', name: 'West Side Bakery', slug: {current: 'west-side'}, address: {street: '789 West Blvd', city: 'Bakeville', state: 'CA', zip: '90212'}},
+  ]
+
+  const posts = Array.from({length: 8}).map((_, i) => ({
+    _id: `post-gen-${i}`,
+    _type: 'post',
+    title: `Baking Tip #${i + 1}`,
+    slug: {current: `baking-tip-${i + 1}`},
+    author: {_type: 'reference', _ref: i % 2 === 0 ? 'person-bob' : 'person-alice'},
+    categories: [{_key: `c${i}`, _type: 'reference', _ref: categories[i % 3]._id}],
+    publishedAt: new Date().toISOString(),
+    mainImage: images[i % images.length] ? {asset: {_type: 'reference', _ref: images[i % images.length]}} : undefined,
+    body: [{_key: 'b1', _type: 'block', children: [{_key: 's1', _type: 'span', text: `This is generated baking tip number ${i + 1}.`}], style: 'normal'}]
+  }))
+
+  const allDocs = [...categories, ...people, ...locations, ...posts]
+
+  console.log(`Importing ${allDocs.length} documents...`)
+  
+  let transaction = client.transaction()
+  allDocs.forEach(doc => {
+    transaction = transaction.createOrReplace(doc)
+  })
+
+  try {
+    await transaction.commit()
+    console.log('Seed successful!')
+  } catch (err) {
+    console.error('Transaction failed:', err.message)
+  }
+}
+
+seed()

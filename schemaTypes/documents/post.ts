@@ -1,14 +1,17 @@
 import {defineField, defineType} from 'sanity'
+import {DocumentIcon} from '@sanity/icons'
 
-export default defineType({
+export const post = defineType({
   name: 'post',
   title: 'Post',
   type: 'document',
+  icon: DocumentIcon,
   fields: [
     defineField({
       name: 'title',
       title: 'Title',
       type: 'string',
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'slug',
@@ -18,6 +21,7 @@ export default defineType({
         source: 'title',
         maxLength: 96,
       },
+      validation: (Rule) => Rule.required(),
     }),
     defineField({
       name: 'author',

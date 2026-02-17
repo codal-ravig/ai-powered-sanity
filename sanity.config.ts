@@ -10,7 +10,24 @@ export default defineConfig({
   projectId: '22t68kfp',
   dataset: 'production',
 
-  plugins: [structureTool(), visionTool()],
+  plugins: [
+    structureTool({
+      structure: (S) =>
+        S.list()
+          .title('Content')
+          .items([
+            S.documentTypeListItem('post').title('Posts'),
+            S.documentTypeListItem('person').title('People'),
+            S.documentTypeListItem('category').title('Categories'),
+            S.documentTypeListItem('location').title('Locations'),
+            S.divider(),
+            ...S.documentTypeListItems().filter(
+              (listItem) => !['post', 'person', 'category', 'location'].includes(listItem.getId() || '')
+            ),
+          ]),
+    }),
+    visionTool(),
+  ],
 
   schema: {
     types: schemaTypes,

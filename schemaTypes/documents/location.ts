@@ -1,9 +1,11 @@
 import {defineField, defineType} from 'sanity'
+import {PinIcon} from '@sanity/icons'
 
-export default defineType({
+export const location = defineType({
   name: 'location',
   title: 'Location',
   type: 'document',
+  icon: PinIcon,
   fields: [
     defineField({
       name: 'name',
@@ -34,10 +36,10 @@ export default defineType({
       title: 'Address',
       type: 'object',
       fields: [
-        {name: 'street', type: 'string', title: 'Street'},
-        {name: 'city', type: 'string', title: 'City'},
-        {name: 'state', type: 'string', title: 'State'},
-        {name: 'zip', type: 'string', title: 'Zip Code'},
+        defineField({name: 'street', type: 'string', title: 'Street'}),
+        defineField({name: 'city', type: 'string', title: 'City'}),
+        defineField({name: 'state', type: 'string', title: 'State'}),
+        defineField({name: 'zip', type: 'string', title: 'Zip Code'}),
       ],
     }),
     defineField({

@@ -41,7 +41,7 @@ export async function generateMetadata({
   const displayImage = post.mainImage || post.imageUrl;
 
   return {
-    title: `${post.title} | Bakery Chronicles`,
+    title: post.title || "Post Not Found",
     description: post.title ?? undefined,
     openGraph: {
       title: post.title || "",
@@ -83,14 +83,13 @@ export default async function PostPage({
 
   if (!post) return notFound();
   
-  // @ts-expect-error - mood added to query but typegen not run yet
   const mood = post.mood;
 
   const similarPosts = await client.fetch<SIMILAR_POSTS_QUERY_RESULT>(SIMILAR_POSTS_QUERY, {
     slug,
     authorId: post.author?._id || "",
     locationId: post.location?._id || "",
-    categoryIds: post.categories?.map((c) => c._id) || [],
+    categoryIds: post.categories?.map((c: any) => c._id) || [],
   });
 
   return (
@@ -181,7 +180,7 @@ export default async function PostPage({
               {(mood || (post.categories && post.categories.length > 0)) && (
                 <div className="mt-8 flex flex-wrap items-center gap-2 sm:gap-3">
                   <Tag className="h-4 w-4 text-emerald-400" />
-                  {post.categories?.map((cat) => (
+                  {post.categories?.map((cat: any) => (
                     <Link
                       key={cat.slug || cat._id}
                       href={`/categories/${cat.slug}`}
@@ -196,7 +195,7 @@ export default async function PostPage({
                         style={{
                             backgroundColor: `${mood.colorStart}22`,
                             borderColor: `${mood.colorStart}44`,
-                            color: mood.colorStart
+                            color: mood.colorStart || undefined
                         }}
                     >
                         {mood.title}
@@ -242,7 +241,7 @@ export default async function PostPage({
                                 <ChefHat className="h-8 w-8 text-slate-700 sm:h-12 sm:w-12" />
                             )}
                             {spMood && (
-                                <div className="absolute top-2 right-2 h-2 w-2 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.5)]" style={{ backgroundColor: spMood.colorStart }} />
+                                <div className="absolute top-2 right-2 h-2 w-2 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.5)]" style={{ backgroundColor: spMood.colorStart || undefined }} />
                             )}
                         </div>
                         <h3 

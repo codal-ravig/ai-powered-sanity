@@ -20,6 +20,53 @@ export type SanityImageAssetReference = {
   [internalGroqTypeReferenceTo]?: "sanity.imageAsset";
 };
 
+export type HomePage = {
+  _id: string;
+  _type: "homePage";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  sections?: Array<
+    | {
+        title?: string;
+        subtitle?: string;
+        image?: {
+          asset?: SanityImageAssetReference;
+          media?: unknown;
+          hotspot?: SanityImageHotspot;
+          crop?: SanityImageCrop;
+          _type: "image";
+        };
+        _type: "hero";
+        _key: string;
+      }
+    | {
+        title?: string;
+        subtitle?: string;
+        _type: "moodPicker";
+        _key: string;
+      }
+    | {
+        title?: string;
+        count?: number;
+        _type: "featuredPosts";
+        _key: string;
+      }
+    | {
+        heading?: string;
+        content?: BlockContent;
+        align?: "left" | "center" | "right";
+        _type: "textContent";
+        _key: string;
+      }
+  >;
+  seo?: {
+    metaTitle?: string;
+    metaDescription?: string;
+  };
+};
+
 export type BlockContent = Array<
   | {
       children?: Array<{
@@ -49,6 +96,85 @@ export type BlockContent = Array<
     }
 >;
 
+export type SanityImageCrop = {
+  _type: "sanity.imageCrop";
+  top?: number;
+  bottom?: number;
+  left?: number;
+  right?: number;
+};
+
+export type SanityImageHotspot = {
+  _type: "sanity.imageHotspot";
+  x?: number;
+  y?: number;
+  height?: number;
+  width?: number;
+};
+
+export type CategoryReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "category";
+};
+
+export type LocationReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "location";
+};
+
+export type PageReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "page";
+};
+
+export type SiteConfig = {
+  _id: string;
+  _type: "siteConfig";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  headerNav?: Array<{
+    title?: string;
+    linkType?: "internal" | "external";
+    internalLink?: CategoryReference | LocationReference | PageReference;
+    externalLink?: string;
+    _type: "navItem";
+    _key: string;
+  }>;
+  footerText?: string;
+};
+
+export type Page = {
+  _id: string;
+  _type: "page";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  body?: BlockContent;
+  mainImage?: {
+    asset?: SanityImageAssetReference;
+    media?: unknown;
+    hotspot?: SanityImageHotspot;
+    crop?: SanityImageCrop;
+    _type: "image";
+  };
+};
+
+export type Slug = {
+  _type: "slug";
+  current?: string;
+  source?: string;
+};
+
 export type Category = {
   _id: string;
   _type: "category";
@@ -66,25 +192,11 @@ export type PersonReference = {
   [internalGroqTypeReferenceTo]?: "person";
 };
 
-export type CategoryReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "category";
-};
-
 export type MoodReference = {
   _ref: string;
   _type: "reference";
   _weak?: boolean;
   [internalGroqTypeReferenceTo]?: "mood";
-};
-
-export type LocationReference = {
-  _ref: string;
-  _type: "reference";
-  _weak?: boolean;
-  [internalGroqTypeReferenceTo]?: "location";
 };
 
 export type Post = {
@@ -141,33 +253,11 @@ export type Location = {
   description?: BlockContent;
 };
 
-export type SanityImageCrop = {
-  _type: "sanity.imageCrop";
-  top?: number;
-  bottom?: number;
-  left?: number;
-  right?: number;
-};
-
-export type SanityImageHotspot = {
-  _type: "sanity.imageHotspot";
-  x?: number;
-  y?: number;
-  height?: number;
-  width?: number;
-};
-
 export type Geopoint = {
   _type: "geopoint";
   lat?: number;
   lng?: number;
   alt?: number;
-};
-
-export type Slug = {
-  _type: "slug";
-  current?: string;
-  source?: string;
 };
 
 export type Mood = {
@@ -311,18 +401,22 @@ export type SanityImageAsset = {
 
 export type AllSanitySchemaTypes =
   | SanityImageAssetReference
+  | HomePage
   | BlockContent
-  | Category
-  | PersonReference
-  | CategoryReference
-  | MoodReference
-  | LocationReference
-  | Post
-  | Location
   | SanityImageCrop
   | SanityImageHotspot
-  | Geopoint
+  | CategoryReference
+  | LocationReference
+  | PageReference
+  | SiteConfig
+  | Page
   | Slug
+  | Category
+  | PersonReference
+  | MoodReference
+  | Post
+  | Location
+  | Geopoint
   | Mood
   | Person
   | SanityImagePaletteSwatch
@@ -334,6 +428,15 @@ export type AllSanitySchemaTypes =
   | SanityImageAsset;
 
 export declare const internalGroqTypeReferenceTo: unique symbol;
+
+// Source: ../web/src/app/[slug]/page.tsx
+// Variable: PAGE_QUERY
+// Query: *[_type == "page" && slug.current == $slug][0] {    title,    body,    "imageUrl": mainImage.asset->url  }
+export type PAGE_QUERY_RESULT = {
+  title: string | null;
+  body: BlockContent | null;
+  imageUrl: string | null;
+} | null;
 
 // Source: ../web/src/app/authors/[slug]/page.tsx
 // Variable: AUTHOR_QUERY
@@ -397,6 +500,45 @@ export type CATEGORIES_QUERY_RESULT = Array<{
   postCount: number;
 }>;
 
+// Source: ../web/src/app/layout.tsx
+// Variable: SITE_CONFIG_QUERY
+// Query: *[_id == "siteConfig"][0] {    title,    footerText,    headerNav[] {      title,      linkType,      externalLink,      "internalLink": internalLink-> {        _type,        "slug": slug.current      }    }  }
+export type SITE_CONFIG_QUERY_RESULT =
+  | {
+      title: null;
+      footerText: null;
+      headerNav: null;
+    }
+  | {
+      title: string | null;
+      footerText: null;
+      headerNav: null;
+    }
+  | {
+      title: string | null;
+      footerText: string | null;
+      headerNav: Array<{
+        title: string | null;
+        linkType: "external" | "internal" | null;
+        externalLink: string | null;
+        internalLink:
+          | {
+              _type: "category";
+              slug: null;
+            }
+          | {
+              _type: "location";
+              slug: string | null;
+            }
+          | {
+              _type: "page";
+              slug: string | null;
+            }
+          | null;
+      }> | null;
+    }
+  | null;
+
 // Source: ../web/src/app/locations/[slug]/page.tsx
 // Variable: LOCATION_QUERY
 // Query: *[_type == "location" && slug.current == $slug][0] {    name,    address,    geolocation,    description,    "image": image.asset->url,    imageUrl,    "posts": *[_type == "post" && references(^._id)] | order(publishedAt desc) {      _id,      title,      slug,      publishedAt,      "mainImage": mainImage.asset->url,      imageUrl    }  }
@@ -441,8 +583,59 @@ export type LOCATIONS_QUERY_RESULT = Array<{
 }>;
 
 // Source: ../web/src/app/page.tsx
+// Variable: HOME_PAGE_QUERY
+// Query: *[_id == "homePage"][0] {    title,    sections[] {      _type,      _key,      _type == "hero" => {        title,        subtitle,        "imageUrl": image.asset->url      },      _type == "moodPicker" => {        title,        subtitle      },      _type == "featuredPosts" => {        title,        count      },      _type == "textContent" => {        heading,        content,        align      }    },    seo  }
+export type HOME_PAGE_QUERY_RESULT =
+  | {
+      title: null;
+      sections: null;
+      seo: null;
+    }
+  | {
+      title: string | null;
+      sections: null;
+      seo: null;
+    }
+  | {
+      title: string | null;
+      sections: Array<
+        | {
+            _type: "featuredPosts";
+            _key: string;
+            title: string | null;
+            count: number | null;
+          }
+        | {
+            _type: "hero";
+            _key: string;
+            title: string | null;
+            subtitle: string | null;
+            imageUrl: string | null;
+          }
+        | {
+            _type: "moodPicker";
+            _key: string;
+            title: string | null;
+            subtitle: string | null;
+          }
+        | {
+            _type: "textContent";
+            _key: string;
+            heading: string | null;
+            content: BlockContent | null;
+            align: "center" | "left" | "right" | null;
+          }
+      > | null;
+      seo: {
+        metaTitle?: string;
+        metaDescription?: string;
+      } | null;
+    }
+  | null;
+
+// Source: ../web/src/app/page.tsx
 // Variable: INITIAL_POSTS_QUERY
-// Query: *[_type == "post" && defined(slug.current)] | order(publishedAt desc, _id desc)[0...12] {    _id,    title,    slug,    publishedAt,    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},    "mainImage": mainImage.asset->url,    imageUrl,    "categories": categories[]->{_id, title, "slug": slug.current}  }
+// Query: *[_type == "post" && defined(slug.current)] | order(publishedAt desc, _id desc)[0...12] {    _id,    title,    slug,    publishedAt,    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},    "mainImage": mainImage.asset->url,    imageUrl,    "categories": categories[]->{_id, title, "slug": slug.current},    "mood": mood->{_id, title, slug, colorStart, colorEnd}  }
 export type INITIAL_POSTS_QUERY_RESULT = Array<{
   _id: string;
   title: string | null;
@@ -469,11 +662,30 @@ export type INITIAL_POSTS_QUERY_RESULT = Array<{
     title: string | null;
     slug: null;
   }> | null;
+  mood: {
+    _id: string;
+    title: string | null;
+    slug: Slug | null;
+    colorStart: string | null;
+    colorEnd: string | null;
+  } | null;
+}>;
+
+// Source: ../web/src/app/page.tsx
+// Variable: MOODS_QUERY
+// Query: *[_type == "mood"] | order(title asc) {    _id,    title,    slug,    description,    colorStart,    colorEnd  }
+export type MOODS_QUERY_RESULT = Array<{
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  description: string | null;
+  colorStart: string | null;
+  colorEnd: string | null;
 }>;
 
 // Source: ../web/src/app/posts/[slug]/page.tsx
 // Variable: POST_QUERY
-// Query: *[_type == "post" && slug.current == $slug][0] {    _id,    title,    slug,    publishedAt,    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},    "mainImage": mainImage.asset->url,    imageUrl,    "categories": categories[]->{_id, title, "slug": slug.current},    body  }
+// Query: *[_type == "post" && slug.current == $slug][0] {    _id,    title,    slug,    publishedAt,    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},    "mainImage": mainImage.asset->url,    imageUrl,    "categories": categories[]->{_id, title, "slug": slug.current},    "mood": mood->{_id, title, colorStart, colorEnd},    body  }
 export type POST_QUERY_RESULT = {
   _id: string;
   title: string | null;
@@ -500,12 +712,18 @@ export type POST_QUERY_RESULT = {
     title: string | null;
     slug: null;
   }> | null;
+  mood: {
+    _id: string;
+    title: string | null;
+    colorStart: string | null;
+    colorEnd: string | null;
+  } | null;
   body: BlockContent | null;
 } | null;
 
 // Source: ../web/src/app/posts/[slug]/page.tsx
 // Variable: SIMILAR_POSTS_QUERY
-// Query: *[_type == "post" && slug.current != $slug && (    author._ref == $authorId ||     location._ref == $locationId ||     count(categories[@._ref in $categoryIds]) > 0  )] | order(publishedAt desc)[0...3] {    _id,    title,    slug,    publishedAt,    "mainImage": mainImage.asset->url,    imageUrl  }
+// Query: *[_type == "post" && slug.current != $slug && (    author._ref == $authorId ||     location._ref == $locationId ||     count(categories[@._ref in $categoryIds]) > 0  )] | order(publishedAt desc)[0...3] {    _id,    title,    slug,    publishedAt,    "mainImage": mainImage.asset->url,    imageUrl,    "mood": mood->{_id, title, colorStart, colorEnd}  }
 export type SIMILAR_POSTS_QUERY_RESULT = Array<{
   _id: string;
   title: string | null;
@@ -513,19 +731,29 @@ export type SIMILAR_POSTS_QUERY_RESULT = Array<{
   publishedAt: string | null;
   mainImage: string | null;
   imageUrl: string | null;
+  mood: {
+    _id: string;
+    title: string | null;
+    colorStart: string | null;
+    colorEnd: string | null;
+  } | null;
 }>;
 
 // Query TypeMap
 import "@sanity/client";
 declare module "@sanity/client" {
   interface SanityQueries {
+    '\n  *[_type == "page" && slug.current == $slug][0] {\n    title,\n    body,\n    "imageUrl": mainImage.asset->url\n  }\n': PAGE_QUERY_RESULT;
     '\n  *[_type == "person" && slug.current == $slug][0] {\n    name,\n    bio,\n    "image": image.asset->url,\n    imageUrl,\n    "posts": *[_type == "post" && author._ref == ^._id] | order(publishedAt desc) {\n      _id,\n      title,\n      slug,\n      publishedAt,\n      "mainImage": mainImage.asset->url,\n      imageUrl\n    }\n  }\n': AUTHOR_QUERY_RESULT;
     '\n  *[_type == "category" && slug.current == $slug][0] {\n    title,\n    description,\n    "posts": *[_type == "post" && references(^._id)] | order(publishedAt desc) {\n      _id,\n      title,\n      slug,\n      publishedAt,\n      "mainImage": mainImage.asset->url,\n      imageUrl\n    }\n  }\n': CATEGORY_QUERY_RESULT;
     '\n  *[_type == "category"] | order(title asc) {\n    _id,\n    title,\n    "slug": slug.current,\n    description,\n    "postCount": count(*[_type == "post" && references(^._id)])\n  }\n': CATEGORIES_QUERY_RESULT;
+    '\n  *[_id == "siteConfig"][0] {\n    title,\n    footerText,\n    headerNav[] {\n      title,\n      linkType,\n      externalLink,\n      "internalLink": internalLink-> {\n        _type,\n        "slug": slug.current\n      }\n    }\n  }\n': SITE_CONFIG_QUERY_RESULT;
     '\n  *[_type == "location" && slug.current == $slug][0] {\n    name,\n    address,\n    geolocation,\n    description,\n    "image": image.asset->url,\n    imageUrl,\n    "posts": *[_type == "post" && references(^._id)] | order(publishedAt desc) {\n      _id,\n      title,\n      slug,\n      publishedAt,\n      "mainImage": mainImage.asset->url,\n      imageUrl\n    }\n  }\n': LOCATION_QUERY_RESULT;
     '\n  *[_type == "location"] | order(name asc) {\n    _id,\n    name,\n    slug,\n    address,\n    "image": image.asset->url,\n    imageUrl,\n    "postCount": count(*[_type == "post" && references(^._id)])\n  }\n': LOCATIONS_QUERY_RESULT;
-    '\n  *[_type == "post" && defined(slug.current)] | order(publishedAt desc, _id desc)[0...12] {\n    _id,\n    title,\n    slug,\n    publishedAt,\n    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "mainImage": mainImage.asset->url,\n    imageUrl,\n    "categories": categories[]->{_id, title, "slug": slug.current}\n  }\n': INITIAL_POSTS_QUERY_RESULT;
-    '\n  *[_type == "post" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    publishedAt,\n    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "mainImage": mainImage.asset->url,\n    imageUrl,\n    "categories": categories[]->{_id, title, "slug": slug.current},\n    body\n  }\n': POST_QUERY_RESULT;
-    '\n  *[_type == "post" && slug.current != $slug && (\n    author._ref == $authorId || \n    location._ref == $locationId || \n    count(categories[@._ref in $categoryIds]) > 0\n  )] | order(publishedAt desc)[0...3] {\n    _id,\n    title,\n    slug,\n    publishedAt,\n    "mainImage": mainImage.asset->url,\n    imageUrl\n  }\n': SIMILAR_POSTS_QUERY_RESULT;
+    '\n  *[_id == "homePage"][0] {\n    title,\n    sections[] {\n      _type,\n      _key,\n      _type == "hero" => {\n        title,\n        subtitle,\n        "imageUrl": image.asset->url\n      },\n      _type == "moodPicker" => {\n        title,\n        subtitle\n      },\n      _type == "featuredPosts" => {\n        title,\n        count\n      },\n      _type == "textContent" => {\n        heading,\n        content,\n        align\n      }\n    },\n    seo\n  }\n': HOME_PAGE_QUERY_RESULT;
+    '\n  *[_type == "post" && defined(slug.current)] | order(publishedAt desc, _id desc)[0...12] {\n    _id,\n    title,\n    slug,\n    publishedAt,\n    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "mainImage": mainImage.asset->url,\n    imageUrl,\n    "categories": categories[]->{_id, title, "slug": slug.current},\n    "mood": mood->{_id, title, slug, colorStart, colorEnd}\n  }\n': INITIAL_POSTS_QUERY_RESULT;
+    '\n  *[_type == "mood"] | order(title asc) {\n    _id,\n    title,\n    slug,\n    description,\n    colorStart,\n    colorEnd\n  }\n': MOODS_QUERY_RESULT;
+    '\n  *[_type == "post" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    publishedAt,\n    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "mainImage": mainImage.asset->url,\n    imageUrl,\n    "categories": categories[]->{_id, title, "slug": slug.current},\n    "mood": mood->{_id, title, colorStart, colorEnd},\n    body\n  }\n': POST_QUERY_RESULT;
+    '\n  *[_type == "post" && slug.current != $slug && (\n    author._ref == $authorId || \n    location._ref == $locationId || \n    count(categories[@._ref in $categoryIds]) > 0\n  )] | order(publishedAt desc)[0...3] {\n    _id,\n    title,\n    slug,\n    publishedAt,\n    "mainImage": mainImage.asset->url,\n    imageUrl,\n    "mood": mood->{_id, title, colorStart, colorEnd}\n  }\n': SIMILAR_POSTS_QUERY_RESULT;
   }
 }

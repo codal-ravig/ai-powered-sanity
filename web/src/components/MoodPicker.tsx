@@ -4,15 +4,7 @@ import { motion } from "framer-motion";
 import { Coffee, Sparkles, CloudRain, Moon } from "lucide-react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-
-type Mood = {
-  _id: string;
-  title: string | null;
-  slug: { current: string | null } | null;
-  description: string | null;
-  colorStart: string | null;
-  colorEnd: string | null;
-};
+import { MOODS_QUERY_RESULT } from "@/sanity/types";
 
 const MOOD_ICONS: Record<string, any> = {
   "Morning Ritual": Coffee,
@@ -21,7 +13,7 @@ const MOOD_ICONS: Record<string, any> = {
   "Midnight Snack": Moon,
 };
 
-export function MoodPicker({ moods }: { moods: Mood[] }) {
+export function MoodPicker({ moods }: { moods: MOODS_QUERY_RESULT }) {
   const searchParams = useSearchParams();
   const activeMood = searchParams.get("mood");
 
@@ -29,11 +21,6 @@ export function MoodPicker({ moods }: { moods: Mood[] }) {
 
   return (
     <section className="animate-in fade-in slide-in-from-bottom-8 duration-1000 delay-300">
-      <div className="mb-10 flex flex-col items-center gap-2 text-center md:items-start md:text-left">
-        <h2 className="text-xl font-bold uppercase tracking-[0.2em] text-slate-500 md:text-2xl">How are you feeling?</h2>
-        <p className="text-sm text-slate-400">Choose a mood to explore our stories.</p>
-      </div>
-
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 md:gap-6">
         {moods.map((mood, index) => {
           const Icon = MOOD_ICONS[mood.title || ""] || Sparkles;

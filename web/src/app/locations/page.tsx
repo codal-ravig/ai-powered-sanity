@@ -7,7 +7,7 @@ import { Metadata } from "next";
 import { LOCATIONS_QUERY_RESULT } from "@/sanity/types";
 
 export const metadata: Metadata = {
-  title: "Our Locations | Bakery Chronicles",
+  title: "Our Locations",
   description: "Find your nearest bakery location. Visit us for freshly baked goods and artisanal coffee.",
 };
 

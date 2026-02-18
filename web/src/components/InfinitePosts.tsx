@@ -182,7 +182,7 @@ export function InfinitePosts({ initialPosts }: { initialPosts: INITIAL_POSTS_QU
         <form onSubmit={handleSearch} className="relative w-full max-w-xl group">
             <input
                 type="text"
-                placeholder="Search bakery stories..."
+                placeholder="Search stories..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-4 pl-12 text-sm text-white placeholder-slate-500 outline-none transition-all focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10 md:px-6 md:py-5 md:pl-14"
@@ -213,9 +213,9 @@ export function InfinitePosts({ initialPosts }: { initialPosts: INITIAL_POSTS_QU
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-white/10 pb-6 mb-4">
             <p className="text-slate-400 text-sm font-medium">
                 {activeMood ? (
-                    <>Showing stories for mood: <span className="text-indigo-400 font-bold underline underline-offset-4 decoration-indigo-500/30 capitalize">"{activeMood.replace('-', ' ')}"</span></>
+                    <>Showing results for: <span className="text-indigo-400 font-bold underline underline-offset-4 decoration-indigo-500/30 capitalize">"{activeMood.replace('-', ' ')}"</span></>
                 ) : (
-                    <>Showing fresh results for <span className="text-indigo-400 font-bold underline underline-offset-4 decoration-indigo-500/30">"{searchQuery}"</span></>
+                    <>Showing results for <span className="text-indigo-400 font-bold underline underline-offset-4 decoration-indigo-500/30">"{searchQuery}"</span></>
                 )}
             </p>
             <button onClick={handleReset} className="text-[10px] self-start sm:self-auto font-black uppercase tracking-[0.2em] text-indigo-400 hover:text-indigo-300 transition-colors">Clear Filter</button>
@@ -233,14 +233,14 @@ export function InfinitePosts({ initialPosts }: { initialPosts: INITIAL_POSTS_QU
             {isLoading ? (
             <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-indigo-400 backdrop-blur-2xl shadow-xl transition-all md:px-8 md:py-4">
                 <Loader2 className="animate-spin" size={20} />
-                <span className="text-xs font-black uppercase tracking-[0.2em] md:text-sm">Baking more stories...</span>
+                <span className="text-xs font-black uppercase tracking-[0.2em] md:text-sm">Loading more...</span>
             </div>
             ) : hasMore ? (
             <div className="h-1 w-1 opacity-0" />
             ) : posts.length > 0 ? (
             <div className="flex flex-col items-center gap-4 text-slate-500">
                 <div className="h-px w-24 bg-gradient-to-r from-transparent via-slate-800 to-transparent md:w-32" />
-                <p className="italic text-xs font-medium md:text-sm">That&apos;s the last tray from our oven!</p>
+                <p className="italic text-xs font-medium md:text-sm">No more stories to show.</p>
             </div>
             ) : null}
         </div>

@@ -6,7 +6,7 @@ import { Metadata } from "next";
 import { CATEGORIES_QUERY_RESULT } from "@/sanity/types";
 
 export const metadata: Metadata = {
-  title: "Categories | Bakery Chronicles",
+  title: "Categories",
   description: "Browse all our bakery story categories, from breads to seasonal specials.",
 };
 

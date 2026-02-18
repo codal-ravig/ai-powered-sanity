@@ -13,7 +13,6 @@ type PostCardProps = {
 
 export function PostCard({ post, index }: PostCardProps) {
   const displayImage = post.mainImage || post.imageUrl;
-  // @ts-expect-error - mood added to query but typegen not run yet
   const mood = post.mood;
 
   return (
@@ -66,7 +65,7 @@ export function PostCard({ post, index }: PostCardProps) {
                 style={{
                     backgroundColor: `${mood.colorStart}22`,
                     borderColor: `${mood.colorStart}44`,
-                    color: mood.colorStart
+                    color: mood.colorStart || undefined
                 }}
               >
                 {mood.title}
@@ -107,7 +106,7 @@ export function PostCard({ post, index }: PostCardProps) {
             
             <div 
                 className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-400 group-hover:text-indigo-300 sm:gap-2 sm:text-sm"
-                style={mood?.colorStart ? { color: mood.colorStart } : {}}
+                style={mood?.colorStart ? { color: mood.colorStart || undefined } : {}}
             >
               Full Story <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
             </div>

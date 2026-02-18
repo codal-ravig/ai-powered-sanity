@@ -39,7 +39,7 @@ export function PostCard({ post, index }: PostCardProps) {
           </div>
         ) : (
           <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[1.5rem] bg-white/5 flex items-center justify-center text-slate-700 sm:rounded-[2rem]">
-            <ChefHat size={48} className="md:size-16" />
+            <ChefHat className="h-10 w-10 md:h-12 md:w-12 lg:h-16 lg:w-16" />
           </div>
         )}
 
@@ -70,21 +70,21 @@ export function PostCard({ post, index }: PostCardProps) {
                       />
                     </div>
                   ) : (
-                    <User size={12} className="text-indigo-400 sm:size-14" />
+                    <User className="h-3 w-3 sm:h-4 sm:w-4" />
                   )}
                   <span className="truncate max-w-[80px] sm:max-w-none">{post.author.name}</span>
                 </div>
               )}
               {post.location && (
                 <div className="flex items-center gap-1 sm:gap-1.5">
-                  <MapPin size={12} className="text-cyan-400 sm:size-14" />
+                  <MapPin className="h-3 w-3 sm:h-4 sm:w-4 text-cyan-400" />
                   <span className="truncate max-w-[80px] sm:max-w-none">{post.location.name}</span>
                 </div>
               )}
             </div>
             
             <div className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-400 group-hover:text-indigo-300 sm:gap-2 sm:text-sm">
-              Full Story <ArrowRight size={14} className="transition-transform group-hover:translate-x-1 sm:size-16" />
+              Full Story <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
             </div>
           </div>
         </div>

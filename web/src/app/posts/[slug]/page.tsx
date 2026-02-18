@@ -95,7 +95,7 @@ export default async function PostPage({
           href="/"
           className="mb-8 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-5 py-2 text-xs font-medium text-slate-400 transition-all hover:bg-white/10 hover:text-white sm:mb-12 sm:px-6 sm:text-sm"
         >
-          <ArrowLeft size={16} /> Back to stories
+          <ArrowLeft className="h-4 w-4" /> Back to stories
         </Link>
 
         <article className="overflow-hidden rounded-3xl border border-white/10 bg-white/5 shadow-2xl backdrop-blur-3xl">
@@ -130,7 +130,7 @@ export default async function PostPage({
                         />
                       ) : (
                         <div className="flex h-full w-full items-center justify-center text-indigo-400">
-                          <User size={18} />
+                          <User className="h-4 w-4 sm:h-5 sm:w-5" />
                         </div>
                       )}
                     </div>
@@ -139,13 +139,13 @@ export default async function PostPage({
                 )}
                 {post.location && (
                    <Link href={`/locations/${post.location.slug?.current}`} className="group/link flex items-center gap-2 hover:text-white transition-colors">
-                    <MapPin size={18} className="text-cyan-400 sm:size-20" />
+                    <MapPin className="h-4 w-4 sm:h-5 sm:w-5 text-cyan-400" />
                     <span className="font-medium">{post.location.name}</span>
                   </Link>
                 )}
                 {post.publishedAt && (
                   <div className="flex items-center gap-2">
-                    <Calendar size={18} className="text-slate-500 sm:size-20" />
+                    <Calendar className="h-4 w-4 sm:h-5 sm:w-5 text-slate-500" />
                     <span>{new Date(post.publishedAt).toLocaleDateString()}</span>
                   </div>
                 )}
@@ -153,7 +153,7 @@ export default async function PostPage({
 
               {post.categories && post.categories.length > 0 && (
                 <div className="mt-8 flex flex-wrap items-center gap-2 sm:gap-3">
-                  <Tag size={16} className="text-emerald-400 sm:size-18" />
+                  <Tag className="h-4 w-4 text-emerald-400" />
                   {post.categories.map((cat) => (
                     <Link
                       key={cat.slug || cat._id}
@@ -188,7 +188,7 @@ export default async function PostPage({
                                 className="object-cover transition-transform group-hover:scale-110" 
                             />
                             ) : (
-                                <ChefHat size={24} className="text-slate-700 sm:size-32" />
+                                <ChefHat className="h-8 w-8 text-slate-700 sm:h-12 sm:w-12" />
                             )}
                         </div>
                         <h3 className="text-sm font-bold text-slate-200 group-hover:text-indigo-400 transition-colors line-clamp-2 sm:text-base">{sp.title}</h3>

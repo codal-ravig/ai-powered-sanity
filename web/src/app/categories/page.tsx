@@ -2,6 +2,12 @@ import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
 import Link from "next/link";
 import { ArrowLeft, Tag, ArrowRight } from "lucide-react";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Categories | Bakery Chronicles",
+  description: "Browse all our bakery story categories, from breads to seasonal specials.",
+};
 
 const CATEGORIES_QUERY = defineQuery(/* groq */ `
   *[_type == "category"] | order(title asc) {
@@ -17,14 +23,14 @@ export default async function CategoriesPage() {
   const categories = await client.fetch(CATEGORIES_QUERY);
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-900 via-slate-900 to-black text-white px-6 py-20">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-900 via-slate-900 to-black text-white px-6 py-20 font-sans">
       <div className="container mx-auto max-w-4xl">
         <Link href="/" className="mb-12 inline-flex items-center gap-2 rounded-full border border-white/10 bg-white/5 px-6 py-2 text-sm font-medium text-slate-400 hover:text-white transition-all">
           <ArrowLeft size={16} /> All stories
         </Link>
 
         <header className="mb-16">
-          <h1 className="text-6xl font-extrabold tracking-tight mb-4 bg-gradient-to-r from-emerald-400 to-emerald-600 bg-clip-text text-transparent">Bakery Categories</h1>
+          <h1 className="text-6xl font-extrabold tracking-tight mb-4 bg-gradient-to-r from-emerald-400 to-emerald-600 bg-clip-text text-transparent pb-2">Bakery Categories</h1>
           <p className="text-xl text-slate-400">Explore our baked goods by type.</p>
         </header>
 

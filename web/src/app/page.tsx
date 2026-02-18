@@ -1,32 +1,43 @@
 import { defineQuery } from "next-sanity";
-import { client } from "@/sanity/client";
 import Link from "next/link";
 import { Post } from "@/sanity/types";
 import { InfinitePosts } from "@/components/InfinitePosts";
+import { sanityFetch } from "@/sanity/live";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Bakery Chronicles | Artisanal Stories & Recipes",
+  description: "Explore the latest stories, recipes, and news from our artisanal bakery. From sourdough secrets to French pastry masterclasses.",
+  openGraph: {
+    title: "Bakery Chronicles | Artisanal Stories & Recipes",
+    description: "Explore the latest stories, recipes, and news from our artisanal bakery.",
+    type: "website",
+  }
+};
 
 const INITIAL_POSTS_QUERY = defineQuery(/* groq */ `
-  *[_type == "post" && defined(slug.current)] | order(publishedAt desc)[0...12] {
+  *[_type == "post" && defined(slug.current)] | order(publishedAt desc, _id desc)[0...12] {
     _id,
     title,
     slug,
     publishedAt,
-    "author": author->{name, slug, "image": image.asset->url, imageUrl},
-    "location": location->{name, slug, "image": image.asset->url, imageUrl},
+    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},
+    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},
     "mainImage": mainImage.asset->url,
     imageUrl,
-    "categories": categories[]->{title, slug}
+    "categories": categories[]->{_id, title, slug}
   }
 `);
 
 export default async function Home() {
-  const initialPosts = await client.fetch<Post[]>(INITIAL_POSTS_QUERY);
+  const { data: initialPosts } = await sanityFetch({ query: INITIAL_POSTS_QUERY });
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-900 via-slate-900 to-black text-white selection:bg-indigo-500/30 overflow-x-hidden">
+    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,var(--tw-gradient-stops))] from-indigo-900 via-slate-900 to-black text-white selection:bg-indigo-500/30 overflow-x-hidden font-sans">
       <main className="container mx-auto max-w-6xl px-6 py-20">
-        <header className="mb-20 text-center animate-in fade-in slide-in-from-top-4 duration-1000">
+        <header className="mb-20 text-center">
           <Link href="/">
-            <h1 className="mb-4 bg-gradient-to-r from-indigo-400 via-cyan-400 to-emerald-400 bg-clip-text text-7xl font-extrabold tracking-tight text-transparent leading-normal pb-2">
+            <h1 className="mb-4 bg-linear-to-r from-indigo-400 via-cyan-400 to-emerald-400 bg-clip-text text-7xl font-extrabold tracking-tight text-transparent leading-normal pb-2">
               Bakery Chronicles
             </h1>
           </Link>
@@ -39,7 +50,7 @@ export default async function Home() {
           </div>
         </header>
 
-        <InfinitePosts initialPosts={initialPosts} />
+        <InfinitePosts initialPosts={initialPosts as Post[]} />
 
         {initialPosts.length === 0 && (
           <div className="rounded-3xl border border-white/10 bg-white/5 p-12 text-center backdrop-blur-xl">

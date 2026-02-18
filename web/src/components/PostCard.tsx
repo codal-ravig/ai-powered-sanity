@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import Image from "next/image";
-import { Calendar, User, ArrowRight, MapPin } from "lucide-react";
+import { User, ArrowRight, MapPin } from "lucide-react";
 import { motion } from "framer-motion";
 import { Post } from "@/sanity/types";
 
@@ -21,8 +21,8 @@ export function PostCard({ post, index }: { post: Post; index: number }) {
       {displayImage && (
         <Link href={`/posts/${post.slug?.current}`} className="relative aspect-[16/10] w-full overflow-hidden rounded-2xl bg-white/5">
           <Image
-            src={displayImage}
-            alt={post.title || ""}
+            src={displayImage as string}
+            alt={post.title || "Post Image"}
             fill
             className="object-cover transition-transform duration-700 group-hover:scale-110"
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -32,8 +32,8 @@ export function PostCard({ post, index }: { post: Post; index: number }) {
 
       <div className="flex flex-1 flex-col p-6">
         <div className="mb-4 flex flex-wrap gap-2">
-          {post.categories?.map((cat: any) => (
-            <span key={cat.slug?.current} className="rounded-full bg-emerald-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400 border border-emerald-500/20">
+          {post.categories?.map((cat) => (
+            <span key={cat._id || cat.slug?.current || cat.title} className="rounded-full bg-emerald-500/10 px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-emerald-400 border border-emerald-500/20">
               {cat.title}
             </span>
           ))}
@@ -52,10 +52,10 @@ export function PostCard({ post, index }: { post: Post; index: number }) {
                 {(post.author.image || post.author.imageUrl) ? (
                   <div className="relative h-6 w-6 overflow-hidden rounded-full border border-white/20">
                     <Image 
-                        src={post.author.image || post.author.imageUrl || ""} 
+                        src={(post.author.image || post.author.imageUrl) as string} 
                         fill 
                         className="object-cover" 
-                        alt={post.author.name} 
+                        alt={post.author.name || "Author"} 
                     />
                   </div>
                 ) : (

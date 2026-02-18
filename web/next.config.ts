@@ -10,6 +10,9 @@ const nextConfig: NextConfig = {
       {
         protocol: 'https',
         hostname: 'cdn.sanity.io',
+      }, {
+        protocol: 'https',
+        hostname: 'maps.googleapis.com',
       },
     ],
   },

@@ -7,7 +7,7 @@ const client = createClient({
   dataset: 'production',
   useCdn: false,
   apiVersion: '2024-02-17',
-  token: process.env.SANITY_API_TOKEN, // Ensure this is set or run from authenticated CLI
+  token: process.env.SANITY_API_TOKEN,
 })
 
 async function uploadImage(filePath: string) {
@@ -31,19 +31,37 @@ async function seed() {
   const images = [img1, img2, img3].filter(Boolean) as string[]
   
   const categories = [
-    {_id: 'cat-cakes', _type: 'category', title: 'Cakes', description: 'Delicious cakes for all occasions.', slug: {current: 'cakes'}},
-    {_id: 'cat-cookies', _type: 'category', title: 'Cookies', description: 'Crunchy and chewy cookies.', slug: {current: 'cookies'}},
-    {_id: 'cat-sandwiches', _type: 'category', title: 'Sandwiches', description: 'Freshly made sandwiches.', slug: {current: 'sandwiches'}},
+    {_id: 'cat-cakes', _type: 'category', title: 'Cakes', slug: {current: 'cakes'}, description: 'Delicious cakes for all occasions.'},
+    {_id: 'cat-cookies', _type: 'category', title: 'Cookies', slug: {current: 'cookies'}, description: 'Crunchy and chewy cookies.'},
+    {_id: 'cat-sandwiches', _type: 'category', title: 'Sandwiches', slug: {current: 'sandwiches'}, description: 'Freshly made sandwiches.'},
   ]
 
   const people = [
-    {_id: 'person-bob', _type: 'person', name: 'Bob Baker', slug: {current: 'bob-baker'}, image: images[0] ? {asset: {_type: 'reference', _ref: images[0]}, hotspot: true} : undefined, bio: [{_key: 'b1', _type: 'block', children: [{_key: 's1', _type: 'span', text: 'Head baker with 20 years of experience.'}], style: 'normal'}]},
-    {_id: 'person-alice', _type: 'person', name: 'Alice Icing', slug: {current: 'alice-icing'}, image: images[1] ? {asset: {_type: 'reference', _ref: images[1]}, hotspot: true} : undefined, bio: [{_key: 'b1', _type: 'block', children: [{_key: 's1', _type: 'span', text: 'Pastry chef extraordinaire specializing in intricate designs.'}], style: 'normal'}]},
+    {_id: 'person-bob', _type: 'person', name: 'Bob Baker', slug: {current: 'bob-baker'}, image: images[0] ? {asset: {_type: 'reference', _ref: images[0]}, hotspot: true} : undefined, bio: [{_key: 'b1', _type: 'block', children: [{_key: 's1', _type: 'span', text: 'Head baker with 20 years of experience in traditional French pastry.'}], style: 'normal'}]},
+    {_id: 'person-alice', _type: 'person', name: 'Alice Icing', slug: {current: 'alice-icing'}, image: images[1] ? {asset: {_type: 'reference', _ref: images[1]}, hotspot: true} : undefined, bio: [{_key: 'b1', _type: 'block', children: [{_key: 's1', _type: 'span', text: 'Pastry chef extraordinaire specializing in intricate wedding cake designs and sugar art.'}], style: 'normal'}]},
   ]
 
   const locations = [
-    {_id: 'loc-east', _type: 'location', name: 'East Side Bakery', slug: {current: 'east-side'}, address: {street: '456 East Ave', city: 'Bakeville', state: 'CA', zip: '90211'}, image: images[2] ? {asset: {_type: 'reference', _ref: images[2]}, hotspot: true} : undefined},
-    {_id: 'loc-west', _type: 'location', name: 'West Side Bakery', slug: {current: 'west-side'}, address: {street: '789 West Blvd', city: 'Bakeville', state: 'CA', zip: '90212'}, image: images[0] ? {asset: {_type: 'reference', _ref: images[0]}, hotspot: true} : undefined},
+    {
+        _id: 'loc-east', 
+        _type: 'location', 
+        name: 'East Side Bakery', 
+        slug: {current: 'east-side'}, 
+        address: {street: '456 East Ave', city: 'Bakeville', state: 'CA', zip: '90211'}, 
+        image: images[2] ? {asset: {_type: 'reference', _ref: images[2]}, hotspot: true} : undefined,
+        geolocation: {lat: 34.0522, lng: -118.2437},
+        description: [{_key: 'd1', _type: 'block', children: [{_key: 's1', _type: 'span', text: 'Our original flagship store in the heart of the East Side arts district.'}], style: 'normal'}]
+    },
+    {
+        _id: 'loc-west', 
+        _type: 'location', 
+        name: 'West Side Bakery', 
+        slug: {current: 'west-side'}, 
+        address: {street: '789 West Blvd', city: 'Bakeville', state: 'CA', zip: '90212'}, 
+        image: images[0] ? {asset: {_type: 'reference', _ref: images[0]}, hotspot: true} : undefined,
+        geolocation: {lat: 34.0195, lng: -118.4912},
+        description: [{_key: 'd1', _type: 'block', children: [{_key: 's1', _type: 'span', text: 'A cozy seaside spot featuring beach-inspired treats and custom orders.'}], style: 'normal'}]
+    },
   ]
 
   const titles = [
@@ -62,7 +80,7 @@ async function seed() {
     location: {_type: 'reference', _ref: i % 2 === 0 ? 'loc-east' : 'loc-west'},
     publishedAt: new Date(Date.now() - i * 86400000).toISOString(),
     mainImage: images[i % images.length] ? {asset: {_type: 'reference', _ref: images[i % images.length]}, hotspot: true} : undefined,
-    body: [{_key: 'b1', _type: 'block', children: [{_key: 's1', _type: 'span', text: `Learn the secrets of ${title.toLowerCase()} in this comprehensive guide.`}], style: 'normal'}]
+    body: [{_key: 'b1', _type: 'block', children: [{_key: 's1', _type: 'span', text: `Learn the secrets of ${title.toLowerCase()} in this comprehensive guide. We dive deep into the techniques that make our bakery famous.`}], style: 'normal'}]
   }))
 
   const allDocs = [...categories, ...people, ...locations, ...posts]

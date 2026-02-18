@@ -501,6 +501,13 @@
         },
         "optional": true
       },
+      "imageUrl": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
+        },
+        "optional": true
+      },
       "categories": {
         "type": "objectAttribute",
         "value": {
@@ -642,6 +649,13 @@
               }
             }
           }
+        },
+        "optional": true
+      },
+      "imageUrl": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
         },
         "optional": true
       },
@@ -949,6 +963,13 @@
               }
             }
           }
+        },
+        "optional": true
+      },
+      "imageUrl": {
+        "type": "objectAttribute",
+        "value": {
+          "type": "string"
         },
         "optional": true
       },

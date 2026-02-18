@@ -96,6 +96,7 @@ export type Post = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  imageUrl?: string;
   categories?: Array<
     {
       _key: string;
@@ -121,6 +122,7 @@ export type Location = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  imageUrl?: string;
   address?: {
     street?: string;
     city?: string;
@@ -175,6 +177,7 @@ export type Person = {
     crop?: SanityImageCrop;
     _type: "image";
   };
+  imageUrl?: string;
   bio?: Array<{
     children?: Array<{
       marks?: Array<string>;
@@ -370,7 +373,7 @@ export type CATEGORIES_QUERY_RESULT = Array<{
 
 // Source: ../web/src/app/locations/[slug]/page.tsx
 // Variable: LOCATION_QUERY
-// Query: *[_type == "location" && slug.current == $slug][0] {    name,    address,    "image": image.asset->url,    "posts": *[_type == "post" && references(^._id)] | order(publishedAt desc) {      _id,      title,      slug,      publishedAt,      "mainImage": mainImage.asset->url    }  }
+// Query: *[_type == "location" && slug.current == $slug][0] {    name,    address,    geolocation,    description,    "image": image.asset->url,    "posts": *[_type == "post" && references(^._id)] | order(publishedAt desc) {      _id,      title,      slug,      publishedAt,      "mainImage": mainImage.asset->url    }  }
 export type LOCATION_QUERY_RESULT = {
   name: string | null;
   address: {
@@ -379,6 +382,8 @@ export type LOCATION_QUERY_RESULT = {
     state?: string;
     zip?: string;
   } | null;
+  geolocation: Geopoint | null;
+  description: BlockContent | null;
   image: string | null;
   posts: Array<{
     _id: string;
@@ -408,7 +413,7 @@ export type LOCATIONS_QUERY_RESULT = Array<{
 
 // Source: ../web/src/app/page.tsx
 // Variable: POSTS_QUERY
-// Query: *[_type == "post" && defined(slug.current)] | order(publishedAt desc)[0...12] {    _id,    title,    slug,    publishedAt,    "author": author->{name, slug, "image": image.asset->url},    "location": location->{name, slug, "image": image.asset->url},    "mainImage": mainImage.asset->url,    "categories": categories[]->{title, slug}  }
+// Query: *[_type == "post" && defined(slug.current)] | order(publishedAt desc)[0...12] {    _id,    title,    slug,    publishedAt,    "author": author->{name, slug, "image": image.asset->url, imageUrl},    "location": location->{name, slug, "image": image.asset->url, imageUrl},    "mainImage": mainImage.asset->url,    imageUrl,    "categories": categories[]->{title, slug}  }
 export type POSTS_QUERY_RESULT = Array<{
   _id: string;
   title: string | null;
@@ -418,13 +423,16 @@ export type POSTS_QUERY_RESULT = Array<{
     name: string | null;
     slug: Slug | null;
     image: string | null;
+    imageUrl: string | null;
   } | null;
   location: {
     name: string | null;
     slug: Slug | null;
     image: string | null;
+    imageUrl: string | null;
   } | null;
   mainImage: string | null;
+  imageUrl: string | null;
   categories: Array<{
     title: string | null;
     slug: null;
@@ -433,7 +441,7 @@ export type POSTS_QUERY_RESULT = Array<{
 
 // Source: ../web/src/app/posts/[slug]/page.tsx
 // Variable: POST_QUERY
-// Query: *[_type == "post" && slug.current == $slug][0] {    _id,    title,    slug,    publishedAt,    "author": author->{name, slug},    "location": location->{name, slug},    "mainImage": mainImage.asset->url,    "categories": categories[]->{title, slug},    body  }
+// Query: *[_type == "post" && slug.current == $slug][0] {    _id,    title,    slug,    publishedAt,    "author": author->{name, slug, "image": image.asset->url},    "location": location->{name, slug, "image": image.asset->url},    "mainImage": mainImage.asset->url,    "categories": categories[]->{_id, title, slug},    body  }
 export type POST_QUERY_RESULT = {
   _id: string;
   title: string | null;
@@ -442,18 +450,32 @@ export type POST_QUERY_RESULT = {
   author: {
     name: string | null;
     slug: Slug | null;
+    image: string | null;
   } | null;
   location: {
     name: string | null;
     slug: Slug | null;
+    image: string | null;
   } | null;
   mainImage: string | null;
   categories: Array<{
+    _id: string;
     title: string | null;
     slug: null;
   }> | null;
   body: BlockContent | null;
 } | null;
+
+// Source: ../web/src/app/posts/[slug]/page.tsx
+// Variable: SIMILAR_POSTS_QUERY
+// Query: *[_type == "post" && slug.current != $slug && (    author._ref == $authorId ||     location._ref == $locationId ||     count(categories[@._ref in $categoryIds]) > 0  )] | order(publishedAt desc)[0...3] {    _id,    title,    slug,    publishedAt,    "mainImage": mainImage.asset->url  }
+export type SIMILAR_POSTS_QUERY_RESULT = Array<{
+  _id: string;
+  title: string | null;
+  slug: Slug | null;
+  publishedAt: string | null;
+  mainImage: string | null;
+}>;
 
 // Query TypeMap
 import "@sanity/client";
@@ -462,9 +484,10 @@ declare module "@sanity/client" {
     '\n  *[_type == "person" && slug.current == $slug][0] {\n    name,\n    bio,\n    "image": image.asset->url,\n    "posts": *[_type == "post" && author._ref == ^._id] | order(publishedAt desc) {\n      _id,\n      title,\n      slug,\n      publishedAt,\n      "mainImage": mainImage.asset->url\n    }\n  }\n': AUTHOR_QUERY_RESULT;
     '\n  *[_type == "category" && slug.current == $slug][0] {\n    title,\n    description,\n    "posts": *[_type == "post" && references(^._id)] | order(publishedAt desc) {\n      _id,\n      title,\n      slug,\n      publishedAt,\n      "mainImage": mainImage.asset->url\n    }\n  }\n': CATEGORY_QUERY_RESULT;
     '\n  *[_type == "category"] | order(title asc) {\n    _id,\n    title,\n    slug,\n    description,\n    "postCount": count(*[_type == "post" && references(^._id)])\n  }\n': CATEGORIES_QUERY_RESULT;
-    '\n  *[_type == "location" && slug.current == $slug][0] {\n    name,\n    address,\n    "image": image.asset->url,\n    "posts": *[_type == "post" && references(^._id)] | order(publishedAt desc) {\n      _id,\n      title,\n      slug,\n      publishedAt,\n      "mainImage": mainImage.asset->url\n    }\n  }\n': LOCATION_QUERY_RESULT;
+    '\n  *[_type == "location" && slug.current == $slug][0] {\n    name,\n    address,\n    geolocation,\n    description,\n    "image": image.asset->url,\n    "posts": *[_type == "post" && references(^._id)] | order(publishedAt desc) {\n      _id,\n      title,\n      slug,\n      publishedAt,\n      "mainImage": mainImage.asset->url\n    }\n  }\n': LOCATION_QUERY_RESULT;
     '\n  *[_type == "location"] | order(name asc) {\n    _id,\n    name,\n    slug,\n    address,\n    "image": image.asset->url,\n    "postCount": count(*[_type == "post" && references(^._id)])\n  }\n': LOCATIONS_QUERY_RESULT;
-    '\n  *[_type == "post" && defined(slug.current)] | order(publishedAt desc)[0...12] {\n    _id,\n    title,\n    slug,\n    publishedAt,\n    "author": author->{name, slug, "image": image.asset->url},\n    "location": location->{name, slug, "image": image.asset->url},\n    "mainImage": mainImage.asset->url,\n    "categories": categories[]->{title, slug}\n  }\n': POSTS_QUERY_RESULT;
-    '\n  *[_type == "post" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    publishedAt,\n    "author": author->{name, slug},\n    "location": location->{name, slug},\n    "mainImage": mainImage.asset->url,\n    "categories": categories[]->{title, slug},\n    body\n  }\n': POST_QUERY_RESULT;
+    '\n  *[_type == "post" && defined(slug.current)] | order(publishedAt desc)[0...12] {\n    _id,\n    title,\n    slug,\n    publishedAt,\n    "author": author->{name, slug, "image": image.asset->url, imageUrl},\n    "location": location->{name, slug, "image": image.asset->url, imageUrl},\n    "mainImage": mainImage.asset->url,\n    imageUrl,\n    "categories": categories[]->{title, slug}\n  }\n': POSTS_QUERY_RESULT;
+    '\n  *[_type == "post" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    publishedAt,\n    "author": author->{name, slug, "image": image.asset->url},\n    "location": location->{name, slug, "image": image.asset->url},\n    "mainImage": mainImage.asset->url,\n    "categories": categories[]->{_id, title, slug},\n    body\n  }\n': POST_QUERY_RESULT;
+    '\n  *[_type == "post" && slug.current != $slug && (\n    author._ref == $authorId || \n    location._ref == $locationId || \n    count(categories[@._ref in $categoryIds]) > 0\n  )] | order(publishedAt desc)[0...3] {\n    _id,\n    title,\n    slug,\n    publishedAt,\n    "mainImage": mainImage.asset->url\n  }\n': SIMILAR_POSTS_QUERY_RESULT;
   }
 }

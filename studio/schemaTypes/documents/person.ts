@@ -32,6 +32,11 @@ export const person = defineType({
       },
     }),
     defineField({
+      name: 'imageUrl',
+      title: 'Image URL (External)',
+      type: 'url',
+    }),
+    defineField({
       name: 'bio',
       title: 'Bio',
       type: 'array',

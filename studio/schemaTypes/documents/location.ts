@@ -32,6 +32,11 @@ export const location = defineType({
       },
     }),
     defineField({
+      name: 'imageUrl',
+      title: 'Image URL (External)',
+      type: 'url',
+    }),
+    defineField({
       name: 'address',
       title: 'Address',
       type: 'object',

@@ -1,13 +1,16 @@
 import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
+import { PortableText } from "@portabletext/react";
 import Link from "next/link";
-import { ArrowLeft, MapPin, Calendar, Clock } from "lucide-react";
+import { ArrowLeft, MapPin, Calendar, Clock, Globe } from "lucide-react";
 import { notFound } from "next/navigation";
 
 const LOCATION_QUERY = defineQuery(/* groq */ `
   *[_type == "location" && slug.current == $slug][0] {
     name,
     address,
+    geolocation,
+    description,
     "image": image.asset->url,
     "posts": *[_type == "post" && references(^._id)] | order(publishedAt desc) {
       _id,
@@ -69,18 +72,40 @@ export default async function LocationPage({
                         <li className="flex justify-between"><span>Sunday</span> <span className="text-white font-medium">8:00 AM - 2:00 PM</span></li>
                     </ul>
                 </div>
-                <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl">
-                    <h2 className="text-xl font-bold mb-4">Location Services</h2>
-                    <ul className="space-y-2 text-slate-400 text-sm list-disc list-inside">
-                        <li>Dine-in seating</li>
-                        <li>Fresh daily batches</li>
-                        <li>Custom order pickup</li>
-                        <li>Artisanal coffee bar</li>
-                    </ul>
-                </div>
+                
+                {location.geolocation && (
+                    <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl">
+                        <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
+                            <Globe className="text-cyan-400" size={20} />
+                            Bakery Map
+                        </h2>
+                        <div className="h-48 w-full overflow-hidden rounded-2xl border border-white/10 bg-black mb-4 group">
+                            <img 
+                                src={`https://maps.googleapis.com/maps/api/staticmap?center=${location.geolocation.lat},${location.geolocation.lng}&zoom=15&size=400x400&maptype=roadmap&markers=color:blue%7Clabel:B%7C${location.geolocation.lat},${location.geolocation.lng}&key=YOUR_API_KEY`} 
+                                alt="Bakery Map Location"
+                                className="h-full w-full object-cover opacity-70 transition-transform group-hover:scale-110"
+                            />
+                        </div>
+                        <p className="text-xs text-slate-500 italic mb-4">Coordinates: {location.geolocation.lat}, {location.geolocation.lng}</p>
+                        <a 
+                            href={`https://www.google.com/maps/search/?api=1&query=${location.geolocation.lat},${location.geolocation.lng}`}
+                            target="_blank"
+                            className="block text-center rounded-xl bg-cyan-500/10 py-3 text-sm font-bold text-cyan-400 border border-cyan-500/20 hover:bg-cyan-500/20 transition-all"
+                        >
+                            Open in Google Maps
+                        </a>
+                    </div>
+                )}
             </div>
 
             <div className="lg:col-span-2">
+                <div className="mb-12 rounded-3xl border border-white/10 bg-white/5 p-10 backdrop-blur-xl">
+                   <h2 className="text-3xl font-bold mb-6">About this spot</h2>
+                   <div className="prose prose-invert prose-cyan max-w-none text-slate-400">
+                        {location.description ? <PortableText value={location.description} /> : <p>Visit our location for freshly baked goods and artisanal coffee served with a smile.</p>}
+                   </div>
+                </div>
+
                 <h2 className="text-3xl font-bold mb-8 border-b border-white/10 pb-4">Stories from this bakery</h2>
                 <div className="grid gap-8 md:grid-cols-2">
                     {location.posts.map((post: any) => (

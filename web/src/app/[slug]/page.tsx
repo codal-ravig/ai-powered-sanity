@@ -1,17 +1,9 @@
-import { defineQuery } from "next-sanity";
 import { PortableText } from "@portabletext/react";
 import { notFound } from "next/navigation";
 import Image from "next/image";
 import { sanityFetch } from "@/sanity/live";
 import { Metadata } from "next";
-
-const PAGE_QUERY = defineQuery(/* groq */ `
-  *[_type == "page" && slug.current == $slug][0] {
-    title,
-    body,
-    "imageUrl": mainImage.asset->url
-  }
-`);
+import { PAGE_QUERY } from "@/sanity/queries/pages";
 
 export async function generateMetadata({
   params,

@@ -1,24 +1,14 @@
-import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
 import Link from "next/link";
 import { ArrowLeft, Tag, ArrowRight } from "lucide-react";
 import { Metadata } from "next";
 import { CATEGORIES_QUERY_RESULT } from "@/sanity/types";
+import { CATEGORIES_QUERY } from "@/sanity/queries/site";
 
 export const metadata: Metadata = {
   title: "Categories",
   description: "Browse all our bakery story categories, from breads to seasonal specials.",
 };
-
-const CATEGORIES_QUERY = defineQuery(/* groq */ `
-  *[_type == "category"] | order(title asc) {
-    _id,
-    title,
-    "slug": slug.current,
-    description,
-    "postCount": count(*[_type == "post" && references(^._id)])
-  }
-`);
 
 export default async function CategoriesPage() {
   const categories = await client.fetch<CATEGORIES_QUERY_RESULT>(CATEGORIES_QUERY);

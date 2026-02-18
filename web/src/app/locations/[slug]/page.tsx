@@ -1,32 +1,13 @@
-import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
 import { PortableText } from "@portabletext/react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, MapPin, Calendar, Clock, Globe } from "lucide-react";
+import { ArrowLeft, MapPin, ArrowRight, Building2, Clock, Globe, Calendar } from "lucide-react";
 import { notFound } from "next/navigation";
 import { sanityFetch } from "@/sanity/live";
 import { Metadata } from "next";
 import { LocationMap } from "@/components/LocationMap";
-
-const LOCATION_QUERY = defineQuery(/* groq */ `
-  *[_type == "location" && slug.current == $slug][0] {
-    name,
-    address,
-    geolocation,
-    description,
-    "image": image.asset->url,
-    imageUrl,
-    "posts": *[_type == "post" && references(^._id)] | order(publishedAt desc) {
-      _id,
-      title,
-      slug,
-      publishedAt,
-      "mainImage": mainImage.asset->url,
-      imageUrl
-    }
-  }
-`);
+import { LOCATION_QUERY } from "@/sanity/queries/site";
 
 export async function generateMetadata({
   params,

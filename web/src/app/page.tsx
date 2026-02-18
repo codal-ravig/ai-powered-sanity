@@ -1,67 +1,14 @@
-import { defineQuery } from "next-sanity";
 import Link from "next/link";
 import Image from "next/image";
 import { InfinitePosts } from "@/components/InfinitePosts";
 import { MoodPicker } from "@/components/MoodPicker";
 import { sanityFetch } from "@/sanity/live";
 import { PortableText } from "@portabletext/react";
+import { HOME_PAGE_QUERY } from "@/sanity/queries/pages";
+import { INITIAL_POSTS_QUERY } from "@/sanity/queries/posts";
+import { MOODS_QUERY } from "@/sanity/queries/site";
 
 export const dynamic = "force-dynamic";
-
-const HOME_PAGE_QUERY = defineQuery(/* groq */ `
-  *[_id == "homePage"][0] {
-    title,
-    sections[] {
-      _type,
-      _key,
-      _type == "hero" => {
-        title,
-        subtitle,
-        "imageUrl": image.asset->url
-      },
-      _type == "moodPicker" => {
-        title,
-        subtitle
-      },
-      _type == "featuredPosts" => {
-        title,
-        count
-      },
-      _type == "textContent" => {
-        heading,
-        content,
-        align
-      }
-    },
-    seo
-  }
-`);
-
-const INITIAL_POSTS_QUERY = defineQuery(/* groq */ `
-  *[_type == "post" && defined(slug.current)] | order(publishedAt desc, _id desc)[0...12] {
-    _id,
-    title,
-    slug,
-    publishedAt,
-    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},
-    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},
-    "mainImage": mainImage.asset->url,
-    imageUrl,
-    "categories": categories[]->{_id, title, "slug": slug.current},
-    "mood": mood->{_id, title, slug, colorStart, colorEnd}
-  }
-`);
-
-const MOODS_QUERY = defineQuery(/* groq */ `
-  *[_type == "mood"] | order(title asc) {
-    _id,
-    title,
-    slug,
-    description,
-    colorStart,
-    colorEnd
-  }
-`);
 
 export async function generateMetadata() {
   const { data: home } = await sanityFetch({ query: HOME_PAGE_QUERY });

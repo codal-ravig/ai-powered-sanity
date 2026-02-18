@@ -1,4 +1,3 @@
-import { defineQuery } from "next-sanity";
 import { PortableText } from "@portabletext/react";
 import Link from "next/link";
 import Image from "next/image";
@@ -6,23 +5,7 @@ import { ArrowLeft, User, Calendar } from "lucide-react";
 import { notFound } from "next/navigation";
 import { sanityFetch } from "@/sanity/live";
 import { Metadata } from "next";
-
-const AUTHOR_QUERY = defineQuery(/* groq */ `
-  *[_type == "person" && slug.current == $slug][0] {
-    name,
-    bio,
-    "image": image.asset->url,
-    imageUrl,
-    "posts": *[_type == "post" && author._ref == ^._id] | order(publishedAt desc) {
-      _id,
-      title,
-      slug,
-      publishedAt,
-      "mainImage": mainImage.asset->url,
-      imageUrl
-    }
-  }
-`);
+import { AUTHOR_QUERY } from "@/sanity/queries/site";
 
 export async function generateMetadata({
   params,

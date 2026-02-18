@@ -1,26 +1,11 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+// @ts-expect-error: CSS import without type declarations
 import "./globals.css";
 import { SanityLive } from "@/sanity/live";
 import { Header } from "@/components/Header";
-import { defineQuery } from "next-sanity";
 import { sanityFetch } from "@/sanity/live";
-
-const SITE_CONFIG_QUERY = defineQuery(/* groq */ `
-  *[_id == "siteConfig"][0] {
-    title,
-    footerText,
-    headerNav[] {
-      title,
-      linkType,
-      externalLink,
-      "internalLink": internalLink-> {
-        _type,
-        "slug": slug.current
-      }
-    }
-  }
-`);
+import { SITE_CONFIG_QUERY } from "@/sanity/queries/site";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -56,7 +41,7 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased bg-[#020617] text-slate-100 flex flex-col min-h-screen`}
       >
         <Header config={config} />
-        <main className="flex-grow">
+        <main className="grow">
             {children}
         </main>
         <footer className="w-full border-t border-white/10 bg-slate-950/50 py-12 px-4 backdrop-blur-md">

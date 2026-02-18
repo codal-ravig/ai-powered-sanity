@@ -1,4 +1,3 @@
-import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
 import Link from "next/link";
 import Image from "next/image";
@@ -6,21 +5,7 @@ import { ArrowLeft, Tag, Calendar } from "lucide-react";
 import { notFound } from "next/navigation";
 import { sanityFetch } from "@/sanity/live";
 import { Metadata } from "next";
-
-const CATEGORY_QUERY = defineQuery(/* groq */ `
-  *[_type == "category" && slug.current == $slug][0] {
-    title,
-    description,
-    "posts": *[_type == "post" && references(^._id)] | order(publishedAt desc) {
-      _id,
-      title,
-      slug,
-      publishedAt,
-      "mainImage": mainImage.asset->url,
-      imageUrl
-    }
-  }
-`);
+import { CATEGORY_QUERY } from "@/sanity/queries/site";
 
 export async function generateMetadata({
   params,

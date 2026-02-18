@@ -1,27 +1,15 @@
-import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, MapPin, ArrowRight, Building2 } from "lucide-react";
 import { Metadata } from "next";
 import { LOCATIONS_QUERY_RESULT } from "@/sanity/types";
+import { LOCATIONS_QUERY } from "@/sanity/queries/site";
 
 export const metadata: Metadata = {
   title: "Our Locations",
   description: "Find your nearest bakery location. Visit us for freshly baked goods and artisanal coffee.",
 };
-
-const LOCATIONS_QUERY = defineQuery(/* groq */ `
-  *[_type == "location"] | order(name asc) {
-    _id,
-    name,
-    slug,
-    address,
-    "image": image.asset->url,
-    imageUrl,
-    "postCount": count(*[_type == "post" && references(^._id)])
-  }
-`);
 
 export default async function LocationsPage() {
   const locations = await client.fetch<LOCATIONS_QUERY_RESULT>(LOCATIONS_QUERY);

@@ -1,4 +1,3 @@
-import { defineQuery } from "next-sanity";
 import { client } from "@/sanity/client";
 import { PortableText } from "@portabletext/react";
 import Link from "next/link";
@@ -8,22 +7,7 @@ import { notFound } from "next/navigation";
 import { sanityFetch } from "@/sanity/live";
 import { Metadata } from "next";
 import { SIMILAR_POSTS_QUERY_RESULT } from "@/sanity/types";
-
-const POST_QUERY = defineQuery(/* groq */ `
-  *[_type == "post" && slug.current == $slug][0] {
-    _id,
-    title,
-    slug,
-    publishedAt,
-    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},
-    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},
-    "mainImage": mainImage.asset->url,
-    imageUrl,
-    "categories": categories[]->{_id, title, "slug": slug.current},
-    "mood": mood->{_id, title, colorStart, colorEnd},
-    body
-  }
-`);
+import { POST_QUERY, SIMILAR_POSTS_QUERY } from "@/sanity/queries/posts";
 
 export async function generateMetadata({
   params,
@@ -52,22 +36,6 @@ export async function generateMetadata({
     },
   };
 }
-
-const SIMILAR_POSTS_QUERY = defineQuery(/* groq */ `
-  *[_type == "post" && slug.current != $slug && (
-    author._ref == $authorId || 
-    location._ref == $locationId || 
-    count(categories[@._ref in $categoryIds]) > 0
-  )] | order(publishedAt desc)[0...3] {
-    _id,
-    title,
-    slug,
-    publishedAt,
-    "mainImage": mainImage.asset->url,
-    imageUrl,
-    "mood": mood->{_id, title, colorStart, colorEnd}
-  }
-`);
 
 export default async function PostPage({
   params,

@@ -1,11 +1,14 @@
-# Sanity Blogging Content Studio
+This is a pnpm monorepo with a Sanity Studio.
 
-Congratulations, you have now installed the Sanity Content Studio, an open-source real-time content editing environment connected to the Sanity backend.
+## Monorepo Management
+You can manage the entire project from this root directory using `pnpm`.
 
-Now you can do the following things:
+- `pnpm install`: Install dependencies for all packages.
+- `pnpm dev`: Run all packages in dev mode.
+- `pnpm studio:dev`: Run only the Sanity Studio dev server.
+- `pnpm -C studio [command]`: Run any command inside the `studio` folder.
 
-- [Read “getting started” in the docs](https://www.sanity.io/docs/introduction/getting-started?utm_source=readme)
-- Check out the example frontend: [React/Next.js](https://github.com/sanity-io/tutorial-sanity-blog-react-next)
-- [Read the blog post about this template](https://www.sanity.io/blog/build-your-own-blog-with-sanity-and-next-js?utm_source=readme)
-- [Join the Sanity community](https://www.sanity.io/community/join?utm_source=readme)
-- [Extend and build plugins](https://www.sanity.io/docs/content-studio/extending?utm_source=readme)
+## Folder Structure
+- `/studio`: The Sanity Studio configuration.
+- `/frontend`: (Planned) The frontend application.
+- `pnpm-workspace.yaml`: Defines the workspace packages.

@@ -6,6 +6,8 @@
     "dev": "pnpm -r run dev",
     "build": "pnpm -r run build",
     "studio:dev": "pnpm --filter studio run dev",
-    "studio:build": "pnpm --filter studio run build"
+    "studio:build": "pnpm --filter studio run build",
+    "web:dev": "pnpm --filter web run dev",
+    "web:build": "pnpm --filter web run build"
   }
 }

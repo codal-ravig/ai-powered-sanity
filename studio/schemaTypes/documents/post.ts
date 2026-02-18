@@ -70,6 +70,13 @@ export const post = defineType({
       title: 'Body',
       type: 'blockContent',
     }),
+    defineField({
+      name: 'views',
+      title: 'Views',
+      type: 'number',
+      initialValue: 0,
+      readOnly: true,
+    }),
   ],
 
   preview: {

@@ -1,0 +1,5 @@
+{
+  "title": "Add external image URL to posts",
+  "documentTypes": ["post"],
+  "path": "index.ts"
+}

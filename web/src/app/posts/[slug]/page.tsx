@@ -2,12 +2,13 @@ import { client } from "@/sanity/client";
 import { PortableText } from "@portabletext/react";
 import Link from "next/link";
 import Image from "next/image";
-import { ArrowLeft, Calendar, User, Tag, MapPin, ChefHat } from "lucide-react";
+import { ArrowLeft, Calendar, User, Tag, MapPin, ChefHat, Eye } from "lucide-react";
 import { notFound } from "next/navigation";
 import { sanityFetch } from "@/sanity/live";
 import { Metadata } from "next";
 import { SIMILAR_POSTS_QUERY_RESULT } from "@/sanity/types";
 import { POST_QUERY, SIMILAR_POSTS_QUERY } from "@/sanity/queries/posts";
+import { ViewCounter } from "@/components/ViewCounter";
 
 export async function generateMetadata({
   params,
@@ -143,7 +144,13 @@ export default async function PostPage({
                     <span>{new Date(post.publishedAt).toLocaleDateString()}</span>
                   </div>
                 )}
+                <div className="flex items-center gap-2">
+                  <Eye className="h-4 w-4 sm:h-5 sm:w-5 text-indigo-400" />
+                  <span>{post.views || 0} views</span>
+                </div>
               </div>
+
+              <ViewCounter id={post._id} />
 
               {(mood || (post.categories && post.categories.length > 0)) && (
                 <div className="mt-8 flex flex-wrap items-center gap-2 sm:gap-3">

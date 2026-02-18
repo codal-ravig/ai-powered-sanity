@@ -1,0 +1,8 @@
+{
+  "path": "./web/src/**/*.{ts,tsx}",
+  "schema": "./studio/schema.json",
+  "generates": "./web/src/sanity/types.ts",
+  "overloads": {
+    "client": "./web/src/sanity/client.ts"
+  }
+}

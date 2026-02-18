@@ -7,7 +7,7 @@ const client = createClient({
   dataset: 'production',
   useCdn: false,
   apiVersion: '2024-02-17',
-  // Exec usually has access to a token if authenticated, but we'll see
+  token: process.env.SANITY_API_TOKEN, // Ensure this is set or run from authenticated CLI
 })
 
 async function uploadImage(filePath: string) {
@@ -17,7 +17,7 @@ async function uploadImage(filePath: string) {
       filename: basename(filePath)
     })
     return asset._id
-  } catch (err) {
+  } catch (err: any) {
     console.error(`Failed to upload ${filePath}:`, err.message)
     return null
   }
@@ -31,31 +31,38 @@ async function seed() {
   const images = [img1, img2, img3].filter(Boolean) as string[]
   
   const categories = [
-    {_id: 'cat-cakes', _type: 'category', title: 'Cakes', description: 'Delicious cakes for all occasions.'},
-    {_id: 'cat-cookies', _type: 'category', title: 'Cookies', description: 'Crunchy and chewy cookies.'},
-    {_id: 'cat-sandwiches', _type: 'category', title: 'Sandwiches', description: 'Freshly made sandwiches.'},
+    {_id: 'cat-cakes', _type: 'category', title: 'Cakes', description: 'Delicious cakes for all occasions.', slug: {current: 'cakes'}},
+    {_id: 'cat-cookies', _type: 'category', title: 'Cookies', description: 'Crunchy and chewy cookies.', slug: {current: 'cookies'}},
+    {_id: 'cat-sandwiches', _type: 'category', title: 'Sandwiches', description: 'Freshly made sandwiches.', slug: {current: 'sandwiches'}},
   ]
 
   const people = [
-    {_id: 'person-bob', _type: 'person', name: 'Bob Baker', slug: {current: 'bob-baker'}, image: images[0] ? {asset: {_type: 'reference', _ref: images[0]}} : undefined},
-    {_id: 'person-alice', _type: 'person', name: 'Alice Icing', slug: {current: 'alice-icing'}, image: images[1] ? {asset: {_type: 'reference', _ref: images[1]}} : undefined},
+    {_id: 'person-bob', _type: 'person', name: 'Bob Baker', slug: {current: 'bob-baker'}, image: images[0] ? {asset: {_type: 'reference', _ref: images[0]}, hotspot: true} : undefined, bio: [{_key: 'b1', _type: 'block', children: [{_key: 's1', _type: 'span', text: 'Head baker with 20 years of experience.'}], style: 'normal'}]},
+    {_id: 'person-alice', _type: 'person', name: 'Alice Icing', slug: {current: 'alice-icing'}, image: images[1] ? {asset: {_type: 'reference', _ref: images[1]}, hotspot: true} : undefined, bio: [{_key: 'b1', _type: 'block', children: [{_key: 's1', _type: 'span', text: 'Pastry chef extraordinaire specializing in intricate designs.'}], style: 'normal'}]},
   ]
 
   const locations = [
-    {_id: 'loc-east', _type: 'location', name: 'East Side Bakery', slug: {current: 'east-side'}, address: {street: '456 East Ave', city: 'Bakeville', state: 'CA', zip: '90211'}},
-    {_id: 'loc-west', _type: 'location', name: 'West Side Bakery', slug: {current: 'west-side'}, address: {street: '789 West Blvd', city: 'Bakeville', state: 'CA', zip: '90212'}},
+    {_id: 'loc-east', _type: 'location', name: 'East Side Bakery', slug: {current: 'east-side'}, address: {street: '456 East Ave', city: 'Bakeville', state: 'CA', zip: '90211'}, image: images[2] ? {asset: {_type: 'reference', _ref: images[2]}, hotspot: true} : undefined},
+    {_id: 'loc-west', _type: 'location', name: 'West Side Bakery', slug: {current: 'west-side'}, address: {street: '789 West Blvd', city: 'Bakeville', state: 'CA', zip: '90212'}, image: images[0] ? {asset: {_type: 'reference', _ref: images[0]}, hotspot: true} : undefined},
   ]
 
-  const posts = Array.from({length: 8}).map((_, i) => ({
+  const titles = [
+    "The Art of Layer Cakes", "Secret Cookie Dough Tips", "The Ultimate Sandwich Sourdough",
+    "Wedding Cake Trends 2026", "Chocolate Chip Masterclass", "Lunch Break Specials",
+    "Seasonal Fruit Tarts", "Perfecting the Croissant"
+  ]
+
+  const posts = titles.map((title, i) => ({
     _id: `post-gen-${i}`,
     _type: 'post',
-    title: `Baking Tip #${i + 1}`,
-    slug: {current: `baking-tip-${i + 1}`},
+    title: title,
+    slug: {current: title.toLowerCase().replace(/ /g, '-')},
     author: {_type: 'reference', _ref: i % 2 === 0 ? 'person-bob' : 'person-alice'},
     categories: [{_key: `c${i}`, _type: 'reference', _ref: categories[i % 3]._id}],
-    publishedAt: new Date().toISOString(),
-    mainImage: images[i % images.length] ? {asset: {_type: 'reference', _ref: images[i % images.length]}} : undefined,
-    body: [{_key: 'b1', _type: 'block', children: [{_key: 's1', _type: 'span', text: `This is generated baking tip number ${i + 1}.`}], style: 'normal'}]
+    location: {_type: 'reference', _ref: i % 2 === 0 ? 'loc-east' : 'loc-west'},
+    publishedAt: new Date(Date.now() - i * 86400000).toISOString(),
+    mainImage: images[i % images.length] ? {asset: {_type: 'reference', _ref: images[i % images.length]}, hotspot: true} : undefined,
+    body: [{_key: 'b1', _type: 'block', children: [{_key: 's1', _type: 'span', text: `Learn the secrets of ${title.toLowerCase()} in this comprehensive guide.`}], style: 'normal'}]
   }))
 
   const allDocs = [...categories, ...people, ...locations, ...posts]
@@ -70,7 +77,7 @@ async function seed() {
   try {
     await transaction.commit()
     console.log('Seed successful!')
-  } catch (err) {
+  } catch (err: any) {
     console.error('Transaction failed:', err.message)
   }
 }

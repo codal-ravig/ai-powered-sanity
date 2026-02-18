@@ -44,6 +44,12 @@ export const post = defineType({
       of: [{type: 'reference', to: {type: 'category'}}],
     }),
     defineField({
+      name: 'location',
+      title: 'Location',
+      type: 'reference',
+      to: {type: 'location'},
+    }),
+    defineField({
       name: 'publishedAt',
       title: 'Published at',
       type: 'datetime',

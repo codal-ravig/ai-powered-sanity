@@ -120,31 +120,31 @@ export function InfinitePosts({ initialPosts }: { initialPosts: INITIAL_POSTS_QU
   }, [inView, hasMore, isLoading, fetchMorePosts, isFiltering]);
 
   return (
-    <div className="flex flex-col gap-10">
-      <div className="flex justify-center mb-12">
+    <div className="flex flex-col gap-8 md:gap-12">
+      <div className="flex justify-center mb-4 md:mb-8">
         <form onSubmit={handleSearch} className="relative w-full max-w-xl group">
             <input
                 type="text"
                 placeholder="Search bakery stories..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full rounded-2xl border border-white/10 bg-white/5 px-6 py-5 pl-14 text-sm text-white placeholder-slate-500 outline-none transition-all focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10"
+                className="w-full rounded-2xl border border-white/10 bg-white/5 px-4 py-4 pl-12 text-sm text-white placeholder-slate-500 outline-none transition-all focus:border-indigo-500/50 focus:ring-4 focus:ring-indigo-500/10 md:px-6 md:py-5 md:pl-14"
             />
-            <Search className="absolute left-5 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors" size={20} />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-500 group-focus-within:text-indigo-400 transition-colors md:left-5" size={20} />
             
-            <div className="absolute right-4 top-1/2 -translate-y-1/2 flex items-center gap-3">
+            <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 md:right-4 md:gap-3">
                 {searchQuery && (
                     <button 
                         type="button"
                         onClick={handleReset}
                         className="p-1 text-slate-500 hover:text-white transition-colors"
                     >
-                        <X size={20} />
+                        <X size={18} />
                     </button>
                 )}
                 <button 
                     type="submit"
-                    className="rounded-xl bg-indigo-500 px-5 py-2 text-xs font-bold uppercase tracking-widest text-white hover:bg-indigo-400 transition-all active:scale-95 shadow-md shadow-indigo-500/20"
+                    className="rounded-xl bg-indigo-500 px-3 py-1.5 text-[10px] font-bold uppercase tracking-widest text-white hover:bg-indigo-400 transition-all active:scale-95 shadow-md shadow-indigo-500/20 md:px-5 md:py-2 md:text-xs"
                 >
                     Find
                 </button>
@@ -153,43 +153,43 @@ export function InfinitePosts({ initialPosts }: { initialPosts: INITIAL_POSTS_QU
       </div>
 
       {isFiltering && (
-        <div className="flex items-center justify-between border-b border-white/10 pb-6 mb-4">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-white/10 pb-6 mb-4">
             <p className="text-slate-400 text-sm font-medium">Showing fresh results for <span className="text-indigo-400 font-bold underline underline-offset-4 decoration-indigo-500/30">"{searchQuery}"</span></p>
-            <button onClick={handleReset} className="text-[10px] font-black uppercase tracking-[0.2em] text-indigo-400 hover:text-indigo-300 transition-colors">Clear Filter</button>
+            <button onClick={handleReset} className="text-[10px] self-start sm:self-auto font-black uppercase tracking-[0.2em] text-indigo-400 hover:text-indigo-300 transition-colors">Clear Filter</button>
         </div>
       )}
 
-      <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
+      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 md:gap-10">
         {posts.map((post, index) => (
-          <PostCard key={`${post._id}-${index}`} post={post as any} index={index} />
+          <PostCard key={`${post._id}-${index}`} post={post} index={index} />
         ))}
       </div>
 
       {!isFiltering && (
         <div ref={ref} className="mt-12 flex min-h-[100px] flex-col items-center justify-center py-12">
             {isLoading ? (
-            <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-8 py-4 text-indigo-400 backdrop-blur-2xl shadow-xl transition-all">
-                <Loader2 className="animate-spin" size={24} />
-                <span className="text-sm font-black uppercase tracking-[0.2em]">Baking more stories...</span>
+            <div className="flex items-center gap-3 rounded-full border border-white/10 bg-white/5 px-6 py-3 text-indigo-400 backdrop-blur-2xl shadow-xl transition-all md:px-8 md:py-4">
+                <Loader2 className="animate-spin" size={20} />
+                <span className="text-xs font-black uppercase tracking-[0.2em] md:text-sm">Baking more stories...</span>
             </div>
             ) : hasMore ? (
             <div className="h-1 w-1 opacity-0" />
             ) : posts.length > 0 ? (
             <div className="flex flex-col items-center gap-4 text-slate-500">
-                <div className="h-px w-32 bg-gradient-to-r from-transparent via-slate-800 to-transparent" />
-                <p className="italic text-sm font-medium">That's the last tray from our oven!</p>
+                <div className="h-px w-24 bg-gradient-to-r from-transparent via-slate-800 to-transparent md:w-32" />
+                <p className="italic text-xs font-medium md:text-sm">That&apos;s the last tray from our oven!</p>
             </div>
             ) : null}
         </div>
       )}
 
       {isFiltering && posts.length === 0 && (
-        <div className="py-32 text-center rounded-[3rem] border-2 border-dashed border-white/5 bg-white/2">
-            <div className="mx-auto w-20 h-20 bg-white/5 rounded-full flex items-center justify-center text-slate-600 mb-6">
-                <Search size={40} />
+        <div className="py-20 text-center rounded-[2rem] border-2 border-dashed border-white/5 bg-white/2 md:py-32 md:rounded-[3rem]">
+            <div className="mx-auto w-16 h-16 bg-white/5 rounded-full flex items-center justify-center text-slate-600 mb-6 md:w-20 md:h-20">
+                <Search size={32} />
             </div>
-            <p className="text-2xl text-slate-500 font-medium italic mb-8">No fresh stories matched your search.</p>
-            <button onClick={handleReset} className="px-8 py-3 rounded-full bg-indigo-500 text-white font-bold text-sm uppercase tracking-widest hover:bg-indigo-400 transition-all shadow-lg shadow-indigo-500/20">Reset Search</button>
+            <p className="px-6 text-xl text-slate-500 font-medium italic mb-8 md:text-2xl">No fresh stories matched your search.</p>
+            <button onClick={handleReset} className="px-6 py-2.5 rounded-full bg-indigo-500 text-white font-bold text-xs uppercase tracking-widest hover:bg-indigo-400 transition-all shadow-lg shadow-indigo-500/20 md:px-8 md:py-3 md:text-sm">Reset Search</button>
         </div>
       )}
     </div>

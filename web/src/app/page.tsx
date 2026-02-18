@@ -34,14 +34,14 @@ export default async function Home() {
 
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-900 via-slate-900 to-black text-white selection:bg-indigo-500/30 overflow-x-hidden font-sans">
-      <main className="container mx-auto max-w-6xl px-6 pt-40 pb-20">
-        <header className="mb-20 text-center animate-in fade-in slide-in-from-top-4 duration-1000">
+      <main className="container mx-auto max-w-6xl px-4 pt-32 pb-20 md:px-6 md:pt-48">
+        <header className="mb-16 text-center animate-in fade-in slide-in-from-top-4 duration-1000 md:mb-24">
           <Link href="/">
-            <h1 className="mb-4 bg-gradient-to-r from-indigo-400 via-cyan-400 to-emerald-400 bg-clip-text text-7xl font-extrabold tracking-tight text-transparent leading-tight pb-2">
+            <h1 className="mx-auto mb-6 max-w-4xl bg-gradient-to-r from-indigo-400 via-cyan-400 to-emerald-400 bg-clip-text text-4xl font-extrabold tracking-tight text-transparent leading-tight pb-2 sm:text-5xl md:text-7xl md:leading-normal">
               Baked with Passion.
             </h1>
           </Link>
-          <p className="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed">
+          <p className="mx-auto max-w-2xl text-base text-slate-400 leading-relaxed sm:text-lg md:text-xl">
             Artisanal stories, recipes, and news from our ovens to your screen.
           </p>
         </header>
@@ -49,8 +49,8 @@ export default async function Home() {
         <InfinitePosts initialPosts={initialPosts} />
 
         {initialPosts.length === 0 && (
-          <div className="rounded-3xl border border-white/10 bg-white/5 p-12 text-center backdrop-blur-xl shadow-xl">
-            <p className="text-xl text-slate-400 italic">The bakery is currently pre-heating. Check back soon for fresh stories!</p>
+          <div className="rounded-3xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-xl shadow-xl md:p-12">
+            <p className="text-lg text-slate-400 italic md:text-xl">The bakery is currently pre-heating. Check back soon for fresh stories!</p>
           </div>
         )}
       </main>

@@ -1,6 +1,5 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-// @ts-expect-error: CSS import without type declarations
 import "./globals.css";
 import { SanityLive } from "@/sanity/live";
 import { Header } from "@/components/Header";

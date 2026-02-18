@@ -1,6 +1,7 @@
 import { defineQuery } from "next-sanity";
 import Link from "next/link";
 import { InfinitePosts } from "@/components/InfinitePosts";
+import { MoodPicker } from "@/components/MoodPicker";
 import { sanityFetch } from "@/sanity/live";
 
 const INITIAL_POSTS_QUERY = defineQuery(/* groq */ `
@@ -13,7 +14,19 @@ const INITIAL_POSTS_QUERY = defineQuery(/* groq */ `
     "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},
     "mainImage": mainImage.asset->url,
     imageUrl,
-    "categories": categories[]->{_id, title, "slug": slug.current}
+    "categories": categories[]->{_id, title, "slug": slug.current},
+    "mood": mood->{_id, title, slug, colorStart, colorEnd}
+  }
+`);
+
+const MOODS_QUERY = defineQuery(/* groq */ `
+  *[_type == "mood"] | order(title asc) {
+    _id,
+    title,
+    slug,
+    description,
+    colorStart,
+    colorEnd
   }
 `);
 
@@ -30,7 +43,10 @@ export async function generateMetadata() {
 }
 
 export default async function Home() {
-  const { data: initialPosts } = await sanityFetch({ query: INITIAL_POSTS_QUERY });
+  const [{ data: initialPosts }, { data: moods }] = await Promise.all([
+    sanityFetch({ query: INITIAL_POSTS_QUERY }),
+    sanityFetch({ query: MOODS_QUERY })
+  ]);
 
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-900 via-slate-900 to-black text-white selection:bg-indigo-500/30 overflow-x-hidden font-sans">
@@ -46,7 +62,12 @@ export default async function Home() {
           </p>
         </header>
 
-        <InfinitePosts initialPosts={initialPosts} />
+        <MoodPicker moods={moods} />
+
+        <div className="mt-16 md:mt-24">
+          <h2 className="mb-10 text-xl font-bold uppercase tracking-[0.2em] text-slate-500 md:text-2xl">Fresh from the oven</h2>
+          <InfinitePosts initialPosts={initialPosts} />
+        </div>
 
         {initialPosts.length === 0 && (
           <div className="rounded-3xl border border-white/10 bg-white/5 p-8 text-center backdrop-blur-xl shadow-xl md:p-12">

@@ -6,6 +6,7 @@ import { client } from "@/sanity/client";
 import { INITIAL_POSTS_QUERY_RESULT } from "@/sanity/types";
 import { PostCard } from "./PostCard";
 import { Loader2, Search, X } from "lucide-react";
+import { useSearchParams, useRouter } from "next/navigation";
 
 const POSTS_PER_PAGE = 6;
 
@@ -16,6 +17,10 @@ export function InfinitePosts({ initialPosts }: { initialPosts: INITIAL_POSTS_QU
   const [searchQuery, setSearchQuery] = useState("");
   const [isFiltering, setIsFiltering] = useState(false);
   
+  const searchParams = useSearchParams();
+  const router = useRouter();
+  const activeMood = searchParams.get("mood");
+  
   const lastPost = posts.length > 0 ? posts[posts.length - 1] : null;
   const lastPublishedAt = lastPost?.publishedAt;
   const lastId = lastPost?._id;
@@ -25,12 +30,58 @@ export function InfinitePosts({ initialPosts }: { initialPosts: INITIAL_POSTS_QU
     rootMargin: "400px",
   });
 
+  const fetchMoodPosts = useCallback(async (moodSlug: string) => {
+    setIsLoading(true);
+    setIsFiltering(true);
+    
+    const MOOD_FILTER_QUERY = `
+      *[_type == "post" && defined(slug.current) && mood->slug.current == $moodSlug] | order(publishedAt desc, _id desc)[0...${POSTS_PER_PAGE}] {
+        _id,
+        title,
+        slug,
+        publishedAt,
+        "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},
+        "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},
+        "mainImage": mainImage.asset->url,
+        imageUrl,
+        "categories": categories[]->{_id, title, "slug": slug.current},
+        "mood": mood->{_id, title, slug, colorStart, colorEnd}
+      }
+    `;
+
+    try {
+      const filteredPosts = await client.fetch<INITIAL_POSTS_QUERY_RESULT>(MOOD_FILTER_QUERY, {
+        moodSlug
+      });
+      setPosts(filteredPosts);
+      setHasMore(filteredPosts.length === POSTS_PER_PAGE);
+    } catch (error) {
+      console.error("Error fetching mood posts:", error);
+    } finally {
+      setIsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (activeMood) {
+      fetchMoodPosts(activeMood);
+    } else if (!searchQuery) {
+      setPosts(initialPosts);
+      setHasMore(initialPosts.length >= 12);
+      setIsFiltering(false);
+    }
+  }, [activeMood, initialPosts, fetchMoodPosts, searchQuery]);
+
   const handleSearch = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!searchQuery.trim()) {
-        setPosts(initialPosts);
-        setHasMore(initialPosts.length >= 12);
-        setIsFiltering(false);
+        if (activeMood) {
+            fetchMoodPosts(activeMood);
+        } else {
+            setPosts(initialPosts);
+            setHasMore(initialPosts.length >= 12);
+            setIsFiltering(false);
+        }
         return;
     }
 
@@ -47,7 +98,8 @@ export function InfinitePosts({ initialPosts }: { initialPosts: INITIAL_POSTS_QU
         "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},
         "mainImage": mainImage.asset->url,
         imageUrl,
-        "categories": categories[]->{_id, title, "slug": slug.current}
+        "categories": categories[]->{_id, title, "slug": slug.current},
+        "mood": mood->{_id, title, slug, colorStart, colorEnd}
       }
     `;
 
@@ -66,9 +118,13 @@ export function InfinitePosts({ initialPosts }: { initialPosts: INITIAL_POSTS_QU
 
   const handleReset = () => {
     setSearchQuery("");
-    setPosts(initialPosts);
-    setHasMore(initialPosts.length >= 12);
-    setIsFiltering(false);
+    if (activeMood) {
+        router.push("/", { scroll: false });
+    } else {
+        setPosts(initialPosts);
+        setHasMore(initialPosts.length >= 12);
+        setIsFiltering(false);
+    }
   };
 
   const fetchMorePosts = useCallback(async () => {
@@ -90,7 +146,8 @@ export function InfinitePosts({ initialPosts }: { initialPosts: INITIAL_POSTS_QU
         "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},
         "mainImage": mainImage.asset->url,
         imageUrl,
-        "categories": categories[]->{_id, title, "slug": slug.current}
+        "categories": categories[]->{_id, title, "slug": slug.current},
+        "mood": mood->{_id, title, slug, colorStart, colorEnd}
       }
     `;
 
@@ -152,9 +209,15 @@ export function InfinitePosts({ initialPosts }: { initialPosts: INITIAL_POSTS_QU
         </form>
       </div>
 
-      {isFiltering && (
+      {(isFiltering || activeMood) && (
         <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between border-b border-white/10 pb-6 mb-4">
-            <p className="text-slate-400 text-sm font-medium">Showing fresh results for <span className="text-indigo-400 font-bold underline underline-offset-4 decoration-indigo-500/30">"{searchQuery}"</span></p>
+            <p className="text-slate-400 text-sm font-medium">
+                {activeMood ? (
+                    <>Showing stories for mood: <span className="text-indigo-400 font-bold underline underline-offset-4 decoration-indigo-500/30 capitalize">"{activeMood.replace('-', ' ')}"</span></>
+                ) : (
+                    <>Showing fresh results for <span className="text-indigo-400 font-bold underline underline-offset-4 decoration-indigo-500/30">"{searchQuery}"</span></>
+                )}
+            </p>
             <button onClick={handleReset} className="text-[10px] self-start sm:self-auto font-black uppercase tracking-[0.2em] text-indigo-400 hover:text-indigo-300 transition-colors">Clear Filter</button>
         </div>
       )}
@@ -183,7 +246,7 @@ export function InfinitePosts({ initialPosts }: { initialPosts: INITIAL_POSTS_QU
         </div>
       )}
 
-      {isFiltering && posts.length === 0 && (
+      {(isFiltering || activeMood) && posts.length === 0 && (
         <div className="py-20 text-center rounded-[2rem] border-2 border-dashed border-white/5 bg-white/2 md:py-32 md:rounded-[3rem]">
             <div className="mx-auto w-16 h-16 bg-white/5 rounded-full flex items-center justify-center text-slate-600 mb-6 md:w-20 md:h-20">
                 <Search size={48} />

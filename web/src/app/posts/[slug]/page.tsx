@@ -20,6 +20,7 @@ const POST_QUERY = defineQuery(/* groq */ `
     "mainImage": mainImage.asset->url,
     imageUrl,
     "categories": categories[]->{_id, title, "slug": slug.current},
+    "mood": mood->{_id, title, colorStart, colorEnd},
     body
   }
 `);
@@ -63,7 +64,8 @@ const SIMILAR_POSTS_QUERY = defineQuery(/* groq */ `
     slug,
     publishedAt,
     "mainImage": mainImage.asset->url,
-    imageUrl
+    imageUrl,
+    "mood": mood->{_id, title, colorStart, colorEnd}
   }
 `);
 
@@ -80,6 +82,9 @@ export default async function PostPage({
   });
 
   if (!post) return notFound();
+  
+  // @ts-expect-error - mood added to query but typegen not run yet
+  const mood = post.mood;
 
   const similarPosts = await client.fetch<SIMILAR_POSTS_QUERY_RESULT>(SIMILAR_POSTS_QUERY, {
     slug,
@@ -89,7 +94,13 @@ export default async function PostPage({
   });
 
   return (
-    <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-900 via-slate-900 to-black text-white selection:bg-indigo-500/30 font-sans">
+    <div 
+        className="min-h-screen transition-colors duration-1000 text-white selection:bg-indigo-500/30 font-sans"
+        style={{
+            backgroundColor: "#020617",
+            backgroundImage: mood?.colorStart ? `radial-gradient(circle at top right, ${mood.colorStart}15, transparent), radial-gradient(circle at bottom left, ${mood.colorEnd || mood.colorStart}10, transparent)` : 'radial-gradient(ellipse_at_top_right, #312e81, #0f172a, #000000)'
+        }}
+    >
       <div className="container mx-auto max-w-4xl px-4 py-24 sm:px-6 md:py-40">
         <Link
           href="/"
@@ -108,12 +119,28 @@ export default async function PostPage({
                 className="object-cover opacity-80"
                 priority
               />
+              {mood && (
+                <div 
+                    className="absolute bottom-4 right-4 rounded-full px-4 py-1.5 text-[10px] font-black uppercase tracking-[0.2em] text-white border backdrop-blur-md shadow-2xl sm:bottom-6 sm:right-6 sm:text-xs"
+                    style={{
+                        backgroundColor: `${mood.colorStart}44`,
+                        borderColor: `${mood.colorStart}66`
+                    }}
+                >
+                    Mood: {mood.title}
+                </div>
+              )}
             </div>
           ) : null}
 
           <div className="p-6 sm:p-10 md:p-16">
             <header className="mb-10 sm:mb-12">
-              <h1 className="mb-6 bg-gradient-to-r from-indigo-300 to-cyan-300 bg-clip-text text-3xl font-extrabold tracking-tight text-transparent leading-tight sm:text-4xl md:text-5xl md:pb-2">
+              <h1 
+                className="mb-6 bg-clip-text text-3xl font-extrabold tracking-tight text-transparent leading-tight sm:text-4xl md:text-5xl md:pb-2"
+                style={{
+                    backgroundImage: mood?.colorStart ? `linear-gradient(to right, ${mood.colorStart}, ${mood.colorEnd || '#fff'})` : 'linear-gradient(to right, #a5b4fc, #67e8f9)'
+                }}
+              >
                 {post.title}
               </h1>
 
@@ -151,10 +178,10 @@ export default async function PostPage({
                 )}
               </div>
 
-              {post.categories && post.categories.length > 0 && (
+              {(mood || (post.categories && post.categories.length > 0)) && (
                 <div className="mt-8 flex flex-wrap items-center gap-2 sm:gap-3">
                   <Tag className="h-4 w-4 text-emerald-400" />
-                  {post.categories.map((cat) => (
+                  {post.categories?.map((cat) => (
                     <Link
                       key={cat.slug || cat._id}
                       href={`/categories/${cat.slug}`}
@@ -163,11 +190,29 @@ export default async function PostPage({
                       {cat.title}
                     </Link>
                   ))}
+                  {mood && (
+                    <div 
+                        className="rounded-full px-3 py-1 text-[10px] text-white border sm:px-4 sm:text-xs"
+                        style={{
+                            backgroundColor: `${mood.colorStart}22`,
+                            borderColor: `${mood.colorStart}44`,
+                            color: mood.colorStart
+                        }}
+                    >
+                        {mood.title}
+                    </div>
+                  )}
                 </div>
               )}
             </header>
 
-            <div className="prose prose-invert prose-indigo max-w-none mb-12 sm:mb-16 text-sm sm:text-base leading-relaxed">
+            <div 
+                className="prose prose-invert max-w-none mb-12 sm:mb-16 text-sm sm:text-base leading-relaxed"
+                style={{
+                    // @ts-ignore
+                    '--tw-prose-links': mood?.colorStart || '#6366f1'
+                }}
+            >
               <PortableText value={post.body || []} />
             </div>
 
@@ -177,9 +222,15 @@ export default async function PostPage({
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                   {similarPosts.map((sp) => {
                     const spImg = sp.mainImage || sp.imageUrl;
+                    // @ts-ignore
+                    const spMood = sp.mood;
+
                     return (
                         <Link key={sp._id} href={`/posts/${sp.slug?.current}`} className="group block">
-                        <div className="relative aspect-video w-full overflow-hidden rounded-xl border border-white/10 mb-3 bg-white/5 flex items-center justify-center">
+                        <div 
+                            className="relative aspect-video w-full overflow-hidden rounded-xl border border-white/10 mb-3 bg-white/5 flex items-center justify-center transition-all group-hover:shadow-2xl"
+                            style={spMood?.colorStart ? { borderColor: `${spMood.colorStart}33` } : {}}
+                        >
                             {spImg ? (
                             <Image 
                                 src={spImg as string} 
@@ -190,8 +241,16 @@ export default async function PostPage({
                             ) : (
                                 <ChefHat className="h-8 w-8 text-slate-700 sm:h-12 sm:w-12" />
                             )}
+                            {spMood && (
+                                <div className="absolute top-2 right-2 h-2 w-2 rounded-full shadow-[0_0_10px_rgba(255,255,255,0.5)]" style={{ backgroundColor: spMood.colorStart }} />
+                            )}
                         </div>
-                        <h3 className="text-sm font-bold text-slate-200 group-hover:text-indigo-400 transition-colors line-clamp-2 sm:text-base">{sp.title}</h3>
+                        <h3 
+                            className="text-sm font-bold text-slate-200 transition-colors line-clamp-2 sm:text-base"
+                            style={spMood?.colorStart ? { '--hover-color': spMood.colorStart } as any : {}}
+                        >
+                            {sp.title}
+                        </h3>
                         </Link>
                     )
                   })}

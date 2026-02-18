@@ -73,6 +73,13 @@ export type CategoryReference = {
   [internalGroqTypeReferenceTo]?: "category";
 };
 
+export type MoodReference = {
+  _ref: string;
+  _type: "reference";
+  _weak?: boolean;
+  [internalGroqTypeReferenceTo]?: "mood";
+};
+
 export type LocationReference = {
   _ref: string;
   _type: "reference";
@@ -102,6 +109,7 @@ export type Post = {
       _key: string;
     } & CategoryReference
   >;
+  mood?: MoodReference;
   location?: LocationReference;
   publishedAt?: string;
   body?: BlockContent;
@@ -160,6 +168,19 @@ export type Slug = {
   _type: "slug";
   current?: string;
   source?: string;
+};
+
+export type Mood = {
+  _id: string;
+  _type: "mood";
+  _createdAt: string;
+  _updatedAt: string;
+  _rev: string;
+  title?: string;
+  slug?: Slug;
+  description?: string;
+  colorStart?: string;
+  colorEnd?: string;
 };
 
 export type Person = {
@@ -294,6 +315,7 @@ export type AllSanitySchemaTypes =
   | Category
   | PersonReference
   | CategoryReference
+  | MoodReference
   | LocationReference
   | Post
   | Location
@@ -301,6 +323,7 @@ export type AllSanitySchemaTypes =
   | SanityImageHotspot
   | Geopoint
   | Slug
+  | Mood
   | Person
   | SanityImagePaletteSwatch
   | SanityImagePalette
@@ -365,7 +388,7 @@ export type CATEGORY_QUERY_RESULT = {
 
 // Source: ../web/src/app/categories/page.tsx
 // Variable: CATEGORIES_QUERY
-// Query: *[_type == "category"] | order(title asc) {    _id,    title,    slug,    description,    "postCount": count(*[_type == "post" && references(^._id)])  }
+// Query: *[_type == "category"] | order(title asc) {    _id,    title,    "slug": slug.current,    description,    "postCount": count(*[_type == "post" && references(^._id)])  }
 export type CATEGORIES_QUERY_RESULT = Array<{
   _id: string;
   title: string | null;
@@ -498,7 +521,7 @@ declare module "@sanity/client" {
   interface SanityQueries {
     '\n  *[_type == "person" && slug.current == $slug][0] {\n    name,\n    bio,\n    "image": image.asset->url,\n    imageUrl,\n    "posts": *[_type == "post" && author._ref == ^._id] | order(publishedAt desc) {\n      _id,\n      title,\n      slug,\n      publishedAt,\n      "mainImage": mainImage.asset->url,\n      imageUrl\n    }\n  }\n': AUTHOR_QUERY_RESULT;
     '\n  *[_type == "category" && slug.current == $slug][0] {\n    title,\n    description,\n    "posts": *[_type == "post" && references(^._id)] | order(publishedAt desc) {\n      _id,\n      title,\n      slug,\n      publishedAt,\n      "mainImage": mainImage.asset->url,\n      imageUrl\n    }\n  }\n': CATEGORY_QUERY_RESULT;
-    '\n  *[_type == "category"] | order(title asc) {\n    _id,\n    title,\n    slug,\n    description,\n    "postCount": count(*[_type == "post" && references(^._id)])\n  }\n': CATEGORIES_QUERY_RESULT;
+    '\n  *[_type == "category"] | order(title asc) {\n    _id,\n    title,\n    "slug": slug.current,\n    description,\n    "postCount": count(*[_type == "post" && references(^._id)])\n  }\n': CATEGORIES_QUERY_RESULT;
     '\n  *[_type == "location" && slug.current == $slug][0] {\n    name,\n    address,\n    geolocation,\n    description,\n    "image": image.asset->url,\n    imageUrl,\n    "posts": *[_type == "post" && references(^._id)] | order(publishedAt desc) {\n      _id,\n      title,\n      slug,\n      publishedAt,\n      "mainImage": mainImage.asset->url,\n      imageUrl\n    }\n  }\n': LOCATION_QUERY_RESULT;
     '\n  *[_type == "location"] | order(name asc) {\n    _id,\n    name,\n    slug,\n    address,\n    "image": image.asset->url,\n    imageUrl,\n    "postCount": count(*[_type == "post" && references(^._id)])\n  }\n': LOCATIONS_QUERY_RESULT;
     '\n  *[_type == "post" && defined(slug.current)] | order(publishedAt desc, _id desc)[0...12] {\n    _id,\n    title,\n    slug,\n    publishedAt,\n    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "mainImage": mainImage.asset->url,\n    imageUrl,\n    "categories": categories[]->{_id, title, "slug": slug.current}\n  }\n': INITIAL_POSTS_QUERY_RESULT;

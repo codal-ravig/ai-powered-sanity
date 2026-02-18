@@ -49,6 +49,12 @@ export const post = defineType({
       of: [{type: 'reference', to: {type: 'category'}}],
     }),
     defineField({
+      name: 'mood',
+      title: 'Mood',
+      type: 'reference',
+      to: {type: 'mood'},
+    }),
+    defineField({
       name: 'location',
       title: 'Location',
       type: 'reference',

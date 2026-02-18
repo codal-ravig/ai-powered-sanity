@@ -1,0 +1,5 @@
+{
+  "title": "Add random moods to all posts",
+  "documentTypes": ["post"],
+  "path": "index.ts"
+}

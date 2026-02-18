@@ -13,6 +13,8 @@ type PostCardProps = {
 
 export function PostCard({ post, index }: PostCardProps) {
   const displayImage = post.mainImage || post.imageUrl;
+  // @ts-expect-error - mood added to query but typegen not run yet
+  const mood = post.mood;
 
   return (
     <motion.div
@@ -23,9 +25,17 @@ export function PostCard({ post, index }: PostCardProps) {
     >
       <Link 
         href={`/posts/${post.slug?.current}`}
-        className="relative flex w-full flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-1.5 transition-all hover:bg-white/10 hover:shadow-2xl hover:shadow-indigo-500/10 dark:hover:shadow-[0_0_50px_-10px_rgba(99,102,241,0.4)] sm:rounded-[2.5rem] sm:p-2"
+        className="relative flex w-full flex-col overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-1.5 transition-all hover:bg-white/10 hover:shadow-2xl sm:rounded-[2.5rem] sm:p-2"
+        style={{
+           borderColor: mood?.colorStart ? `${mood.colorStart}22` : undefined,
+        }}
       >
-        <div className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-emerald-500/10 opacity-0 transition-opacity group-hover:opacity-100" />
+        <div 
+            className="absolute inset-0 bg-gradient-to-br from-indigo-500/10 via-transparent to-emerald-500/10 opacity-0 transition-opacity group-hover:opacity-100" 
+            style={mood?.colorStart && mood?.colorEnd ? {
+                backgroundImage: `linear-gradient(to bottom right, ${mood.colorStart}22, transparent, ${mood.colorEnd}22)`
+            } : {}}
+        />
         
         {displayImage ? (
           <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[1.5rem] bg-white/5 sm:rounded-[2rem]">
@@ -50,6 +60,18 @@ export function PostCard({ post, index }: PostCardProps) {
                 {cat.title}
               </span>
             ))}
+            {mood && (
+              <span 
+                className="rounded-full px-2 py-0.5 text-[9px] font-bold uppercase tracking-wider text-white border sm:px-3 sm:py-1 sm:text-[10px]"
+                style={{
+                    backgroundColor: `${mood.colorStart}22`,
+                    borderColor: `${mood.colorStart}44`,
+                    color: mood.colorStart
+                }}
+              >
+                {mood.title}
+              </span>
+            )}
           </div>
 
           <h2 className="mb-3 text-lg font-bold text-slate-100 group-hover:text-white leading-tight transition-colors sm:mb-4 sm:text-xl md:text-2xl">
@@ -83,7 +105,10 @@ export function PostCard({ post, index }: PostCardProps) {
               )}
             </div>
             
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-400 group-hover:text-indigo-300 sm:gap-2 sm:text-sm">
+            <div 
+                className="inline-flex items-center gap-1.5 text-xs font-bold text-indigo-400 group-hover:text-indigo-300 sm:gap-2 sm:text-sm"
+                style={mood?.colorStart ? { color: mood.colorStart } : {}}
+            >
               Full Story <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 transition-transform group-hover:translate-x-1" />
             </div>
           </div>

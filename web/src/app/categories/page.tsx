@@ -40,14 +40,14 @@ export default async function CategoriesPage() {
             <Link key={category._id} href={`/categories/${category.slug}`} className="group relative overflow-hidden rounded-[2rem] border border-white/10 bg-white/5 p-6 transition-all hover:bg-white/10 hover:shadow-[0_0_50px_-10px_rgba(16,185,129,0.3)] backdrop-blur-3xl sm:rounded-3xl sm:p-8">
               <div className="flex justify-between items-start mb-4 sm:mb-6">
                 <div className="h-10 w-10 rounded-xl bg-emerald-500/10 p-2.5 text-emerald-400 border border-emerald-500/20 sm:h-12 sm:w-12 sm:rounded-2xl sm:p-3">
-                  <Tag size={20} className="sm:size-24" />
+                  <Tag size={20} className="sm:size-6" />
                 </div>
                 <span className="text-emerald-400 font-bold text-[10px] bg-emerald-500/10 px-2 py-0.5 rounded-full border border-emerald-500/20 sm:text-xs sm:px-3 sm:py-1">{category.postCount} stories</span>
               </div>
               <h2 className="text-xl font-bold mb-2 group-hover:text-emerald-300 transition-colors sm:text-2xl sm:mb-3">{category.title}</h2>
               <p className="text-sm text-slate-400 mb-6 line-clamp-2 sm:text-base sm:mb-8">{category.description}</p>
               <div className="flex items-center gap-2 font-bold text-[10px] text-emerald-400 group-hover:gap-4 transition-all uppercase tracking-widest sm:text-xs">
-                Browse Category <ArrowRight size={14} className="sm:size-16" />
+                Browse Category <ArrowRight size={14} className="sm:size-4" />
               </div>
             </Link>
           ))}

@@ -186,7 +186,7 @@ export function InfinitePosts({ initialPosts }: { initialPosts: INITIAL_POSTS_QU
       {isFiltering && posts.length === 0 && (
         <div className="py-20 text-center rounded-[2rem] border-2 border-dashed border-white/5 bg-white/2 md:py-32 md:rounded-[3rem]">
             <div className="mx-auto w-16 h-16 bg-white/5 rounded-full flex items-center justify-center text-slate-600 mb-6 md:w-20 md:h-20">
-                <Search size={32} />
+                <Search size={48} />
             </div>
             <p className="px-6 text-xl text-slate-500 font-medium italic mb-8 md:text-2xl">No fresh stories matched your search.</p>
             <button onClick={handleReset} className="px-6 py-2.5 rounded-full bg-indigo-500 text-white font-bold text-xs uppercase tracking-widest hover:bg-indigo-400 transition-all shadow-lg shadow-indigo-500/20 md:px-8 md:py-3 md:text-sm">Reset Search</button>

@@ -67,7 +67,7 @@ export default async function CategoryPage({
 
         <header className="mb-16 flex flex-col items-center gap-6 text-center">
           <div className="h-20 w-20 rounded-full bg-emerald-500/20 p-5 text-emerald-400 border border-emerald-500/30 shadow-[0_0_30px_-5px_rgba(16,185,129,0.5)]">
-            <Tag size={40} />
+            <Tag size={32} />
           </div>
           <div>
             <h1 className="text-4xl font-bold mb-2">Category: {category.title}</h1>

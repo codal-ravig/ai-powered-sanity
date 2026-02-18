@@ -84,7 +84,7 @@ export default async function LocationPage({
                 />
             ) : (
                 <div className="flex h-full w-full items-center justify-center bg-cyan-900/20 text-cyan-400">
-                    <MapPin size={64} className="md:size-80" />
+                    <MapPin size={64} className="sm:size-72" />
                 </div>
             )}
             <div className="absolute inset-0 bg-gradient-to-t from-black via-black/20 to-transparent" />
@@ -93,7 +93,7 @@ export default async function LocationPage({
                   {location.name}
                 </h1>
                 <div className="flex items-center gap-2 text-sm font-medium text-cyan-400 sm:gap-3 sm:text-base md:text-xl">
-                    <MapPin size={18} className="md:size-24" />
+                    <MapPin size={18} className="sm:size-6" />
                     <span className="line-clamp-1">{location.address?.street}, {location.address?.city}</span>
                 </div>
             </div>

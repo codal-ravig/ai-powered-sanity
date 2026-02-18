@@ -48,7 +48,7 @@ export default async function LocationsPage() {
                     <Image src={locImg as string} alt={location.name || "Location"} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-cyan-500/10 text-cyan-400">
-                      <Building2 size={40} className="md:size-48" />
+                      <Building2 size={40} className="sm:size-48" />
                     </div>
                   )}
                   <div className="absolute top-3 right-3 rounded-full bg-black/60 backdrop-blur-md px-3 py-1 text-[9px] font-bold border border-white/10 text-cyan-400 sm:top-4 sm:right-4 sm:px-4 sm:py-1.5 sm:text-xs">
@@ -58,7 +58,7 @@ export default async function LocationsPage() {
                 <div className="p-5 sm:p-6">
                   <h2 className="text-xl font-bold mb-2 group-hover:text-cyan-300 transition-colors sm:text-2xl">{location.name}</h2>
                   <div className="flex items-start gap-2 text-slate-400 text-xs mb-6 sm:text-sm sm:mb-8">
-                    <MapPin size={14} className="text-cyan-400 shrink-0 mt-0.5 sm:size-16" />
+                    <MapPin size={14} className="text-cyan-400 shrink-0 mt-0.5 sm:size-5" />
                     <span className="line-clamp-1">{location.address?.street}, {location.address?.city}</span>
                   </div>
                   <div className="flex items-center gap-2 font-bold text-[10px] text-cyan-400 group-hover:gap-4 transition-all uppercase tracking-widest sm:text-xs">

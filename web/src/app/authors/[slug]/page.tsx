@@ -81,7 +81,7 @@ export default async function AuthorPage({
                 />
             ) : (
                 <div className="flex h-full w-full items-center justify-center text-indigo-400">
-                    <User size={48} className="sm:size-64" />
+                    <User size={48} className="sm:size-56" />
                 </div>
             )}
           </div>

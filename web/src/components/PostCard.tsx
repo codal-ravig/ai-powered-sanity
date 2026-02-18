@@ -39,7 +39,7 @@ export function PostCard({ post, index }: PostCardProps) {
           </div>
         ) : (
           <div className="relative aspect-[16/10] w-full overflow-hidden rounded-[1.5rem] bg-white/5 flex items-center justify-center text-slate-700 sm:rounded-[2rem]">
-            <ChefHat className="h-10 w-10 md:h-12 md:w-12 lg:h-16 lg:w-16" />
+            <ChefHat className="h-10 w-10 sm:h-12 sm:w-12" />
           </div>
         )}
 

@@ -5,9 +5,12 @@
   "scripts": {
     "dev": "pnpm -r run dev",
     "build": "pnpm -r run build",
-    "studio:dev": "pnpm --filter studio run dev",
-    "studio:build": "pnpm --filter studio run build",
+    "studio:dev": "pnpm --filter my-bakery run dev",
+    "studio:build": "pnpm --filter my-bakery run build",
     "web:dev": "pnpm --filter web run dev",
-    "web:build": "pnpm --filter web run build"
+    "web:build": "pnpm --filter web run build",
+    "typegen": "cd studio && npx sanity schema extract --path=./schema.json && cd ../web && npx sanity typegen generate",
+    "lint": "pnpm --filter web run lint",
+    "type-check": "pnpm --filter web run type-check"
   }
 }

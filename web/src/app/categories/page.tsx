@@ -3,6 +3,7 @@ import { client } from "@/sanity/client";
 import Link from "next/link";
 import { ArrowLeft, Tag, ArrowRight } from "lucide-react";
 import { Metadata } from "next";
+import { CATEGORIES_QUERY_RESULT } from "@/sanity/types";
 
 export const metadata: Metadata = {
   title: "Categories | Bakery Chronicles",
@@ -13,14 +14,14 @@ const CATEGORIES_QUERY = defineQuery(/* groq */ `
   *[_type == "category"] | order(title asc) {
     _id,
     title,
-    slug,
+    "slug": slug.current,
     description,
     "postCount": count(*[_type == "post" && references(^._id)])
   }
 `);
 
 export default async function CategoriesPage() {
-  const categories = await client.fetch(CATEGORIES_QUERY);
+  const categories = await client.fetch<CATEGORIES_QUERY_RESULT>(CATEGORIES_QUERY);
 
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-900 via-slate-900 to-black text-white px-6 py-20 font-sans">
@@ -36,7 +37,7 @@ export default async function CategoriesPage() {
 
         <div className="grid gap-6 md:grid-cols-2">
           {categories.map((category) => (
-            <Link key={category._id} href={`/categories/${category.slug?.current}`} className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 transition-all hover:bg-white/10 hover:shadow-[0_0_50px_-10px_rgba(16,185,129,0.3)] backdrop-blur-3xl">
+            <Link key={category._id} href={`/categories/${category.slug}`} className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-8 transition-all hover:bg-white/10 hover:shadow-[0_0_50px_-10px_rgba(16,185,129,0.3)] backdrop-blur-3xl">
               <div className="flex justify-between items-start mb-4">
                 <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 p-3 text-emerald-400 border border-emerald-500/20">
                   <Tag size={24} />

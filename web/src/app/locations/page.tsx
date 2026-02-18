@@ -4,6 +4,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, MapPin, ArrowRight, Building2 } from "lucide-react";
 import { Metadata } from "next";
+import { LOCATIONS_QUERY_RESULT } from "@/sanity/types";
 
 export const metadata: Metadata = {
   title: "Our Locations | Bakery Chronicles",
@@ -23,7 +24,7 @@ const LOCATIONS_QUERY = defineQuery(/* groq */ `
 `);
 
 export default async function LocationsPage() {
-  const locations = await client.fetch(LOCATIONS_QUERY);
+  const locations = await client.fetch<LOCATIONS_QUERY_RESULT>(LOCATIONS_QUERY);
 
   return (
     <div className="min-h-screen bg-[radial-gradient(ellipse_at_top_right,_var(--tw-gradient-stops))] from-indigo-900 via-slate-900 to-black text-white px-6 py-20 font-sans">
@@ -44,7 +45,7 @@ export default async function LocationsPage() {
               <Link key={location._id} href={`/locations/${location.slug?.current}`} className="group relative overflow-hidden rounded-[2.5rem] border border-white/10 bg-white/5 p-2 transition-all hover:bg-white/10 hover:shadow-[0_0_50px_-10px_rgba(6,182,212,0.3)] backdrop-blur-xl">
                 <div className="relative aspect-video w-full overflow-hidden rounded-[2rem] bg-white/5">
                   {locImg ? (
-                    <Image src={locImg} alt={location.name || "Location"} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
+                    <Image src={locImg as string} alt={location.name || "Location"} fill className="object-cover transition-transform duration-700 group-hover:scale-110" />
                   ) : (
                     <div className="flex h-full w-full items-center justify-center bg-cyan-500/10 text-cyan-400">
                       <Building2 size={48} />

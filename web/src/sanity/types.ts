@@ -419,7 +419,7 @@ export type LOCATIONS_QUERY_RESULT = Array<{
 
 // Source: ../web/src/app/page.tsx
 // Variable: INITIAL_POSTS_QUERY
-// Query: *[_type == "post" && defined(slug.current)] | order(publishedAt desc, _id desc)[0...12] {    _id,    title,    slug,    publishedAt,    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},    "mainImage": mainImage.asset->url,    imageUrl,    "categories": categories[]->{_id, title, slug}  }
+// Query: *[_type == "post" && defined(slug.current)] | order(publishedAt desc, _id desc)[0...12] {    _id,    title,    slug,    publishedAt,    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},    "mainImage": mainImage.asset->url,    imageUrl,    "categories": categories[]->{_id, title, "slug": slug.current}  }
 export type INITIAL_POSTS_QUERY_RESULT = Array<{
   _id: string;
   title: string | null;
@@ -450,7 +450,7 @@ export type INITIAL_POSTS_QUERY_RESULT = Array<{
 
 // Source: ../web/src/app/posts/[slug]/page.tsx
 // Variable: POST_QUERY
-// Query: *[_type == "post" && slug.current == $slug][0] {    _id,    title,    slug,    publishedAt,    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},    "mainImage": mainImage.asset->url,    imageUrl,    "categories": categories[]->{_id, title, slug},    body  }
+// Query: *[_type == "post" && slug.current == $slug][0] {    _id,    title,    slug,    publishedAt,    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},    "mainImage": mainImage.asset->url,    imageUrl,    "categories": categories[]->{_id, title, "slug": slug.current},    body  }
 export type POST_QUERY_RESULT = {
   _id: string;
   title: string | null;
@@ -501,8 +501,8 @@ declare module "@sanity/client" {
     '\n  *[_type == "category"] | order(title asc) {\n    _id,\n    title,\n    slug,\n    description,\n    "postCount": count(*[_type == "post" && references(^._id)])\n  }\n': CATEGORIES_QUERY_RESULT;
     '\n  *[_type == "location" && slug.current == $slug][0] {\n    name,\n    address,\n    geolocation,\n    description,\n    "image": image.asset->url,\n    imageUrl,\n    "posts": *[_type == "post" && references(^._id)] | order(publishedAt desc) {\n      _id,\n      title,\n      slug,\n      publishedAt,\n      "mainImage": mainImage.asset->url,\n      imageUrl\n    }\n  }\n': LOCATION_QUERY_RESULT;
     '\n  *[_type == "location"] | order(name asc) {\n    _id,\n    name,\n    slug,\n    address,\n    "image": image.asset->url,\n    imageUrl,\n    "postCount": count(*[_type == "post" && references(^._id)])\n  }\n': LOCATIONS_QUERY_RESULT;
-    '\n  *[_type == "post" && defined(slug.current)] | order(publishedAt desc, _id desc)[0...12] {\n    _id,\n    title,\n    slug,\n    publishedAt,\n    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "mainImage": mainImage.asset->url,\n    imageUrl,\n    "categories": categories[]->{_id, title, slug}\n  }\n': INITIAL_POSTS_QUERY_RESULT;
-    '\n  *[_type == "post" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    publishedAt,\n    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "mainImage": mainImage.asset->url,\n    imageUrl,\n    "categories": categories[]->{_id, title, slug},\n    body\n  }\n': POST_QUERY_RESULT;
+    '\n  *[_type == "post" && defined(slug.current)] | order(publishedAt desc, _id desc)[0...12] {\n    _id,\n    title,\n    slug,\n    publishedAt,\n    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "mainImage": mainImage.asset->url,\n    imageUrl,\n    "categories": categories[]->{_id, title, "slug": slug.current}\n  }\n': INITIAL_POSTS_QUERY_RESULT;
+    '\n  *[_type == "post" && slug.current == $slug][0] {\n    _id,\n    title,\n    slug,\n    publishedAt,\n    "author": author->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "location": location->{_id, name, slug, "image": image.asset->url, imageUrl},\n    "mainImage": mainImage.asset->url,\n    imageUrl,\n    "categories": categories[]->{_id, title, "slug": slug.current},\n    body\n  }\n': POST_QUERY_RESULT;
     '\n  *[_type == "post" && slug.current != $slug && (\n    author._ref == $authorId || \n    location._ref == $locationId || \n    count(categories[@._ref in $categoryIds]) > 0\n  )] | order(publishedAt desc)[0...3] {\n    _id,\n    title,\n    slug,\n    publishedAt,\n    "mainImage": mainImage.asset->url,\n    imageUrl\n  }\n': SIMILAR_POSTS_QUERY_RESULT;
   }
 }

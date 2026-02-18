@@ -13,7 +13,9 @@
     "deploy-graphql": "sanity graphql deploy",
     "typegen": "sanity schema extract && sanity typegen generate --enforce-required-fields",
     "seed": "pnpm dlx tsx generate-seed.ts",
-    "import:data": "pnpm dlx sanity dataset import generated-seed.ndjson production --replace"
+    "import:data": "pnpm dlx sanity dataset import generated-seed.ndjson production --replace",
+    "lint": "eslint .",
+    "type-check": "tsc --noEmit"
   },
   "keywords": [
     "sanity"

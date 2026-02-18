@@ -76,7 +76,7 @@ export default async function LocationPage({
           <div className="relative h-[400px] w-full overflow-hidden rounded-[3rem] border border-white/10 shadow-2xl bg-white/5">
             {location.image || location.imageUrl ? (
                 <Image 
-                    src={location.image || location.imageUrl || ""} 
+                    src={(location.image || location.imageUrl) as string} 
                     fill 
                     className="object-cover opacity-60" 
                     alt={location.name || "Location"} 
@@ -112,7 +112,7 @@ export default async function LocationPage({
                     </ul>
                 </div>
                 
-                {location.geolocation && (
+                {location.geolocation && typeof location.geolocation.lat === 'number' && typeof location.geolocation.lng === 'number' && (
                     <div className="rounded-3xl border border-white/10 bg-white/5 p-8 backdrop-blur-xl">
                         <h2 className="text-xl font-bold mb-6 flex items-center gap-2">
                             <Globe className="text-cyan-400" size={20} />
@@ -150,7 +150,7 @@ export default async function LocationPage({
                         <Link key={post._id} href={`/posts/${post.slug?.current}`} className="group relative overflow-hidden rounded-3xl border border-white/10 bg-white/5 p-2 transition-all hover:bg-white/10 hover:shadow-[0_0_40px_-10px_rgba(6,182,212,0.3)]">
                             {postImg && (
                                 <div className="relative aspect-video w-full overflow-hidden rounded-2xl">
-                                    <Image src={postImg} alt={post.title || "Post"} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
+                                    <Image src={postImg as string} alt={post.title || "Post"} fill className="object-cover transition-transform duration-500 group-hover:scale-110" />
                                 </div>
                             )}
                             <div className="p-6">

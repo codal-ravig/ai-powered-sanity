@@ -1,6 +1,6 @@
 {
   "path": "./src/**/*.{ts,tsx}",
-  "schema": "/Users/rgupta/Developer/Projects/Learning/Sanity/ai-powered-sanity/studio/schema.json",
+  "schema": "../studio/schema.json",
   "generates": "./src/sanity/types.ts",
   "overloads": {
     "client": "./src/sanity/client.ts"

@@ -7,6 +7,7 @@ import {resolve} from './presentation/resolve'
 import {colorInput} from '@sanity/color-input'
 import {documentListWidget} from 'sanity-plugin-dashboard-widget-document-list'
 import {dashboardTool} from '@sanity/dashboard'
+import { media } from 'sanity-plugin-media'
 const SANITY_STUDIO_PREVIEW_URL = process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000'
 
 export default defineConfig({
@@ -63,6 +64,7 @@ export default defineConfig({
     }),
     visionTool(),
     colorInput(),
+    media(),
     presentationTool({
       resolve,
       previewUrl: {

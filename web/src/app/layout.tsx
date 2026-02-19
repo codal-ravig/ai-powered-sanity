@@ -5,6 +5,9 @@ import { SanityLive } from "@/sanity/live";
 import { Header } from "@/components/Header";
 import { sanityFetch } from "@/sanity/live";
 import { SITE_CONFIG_QUERY } from "@/sanity/queries/site";
+import { VisualEditing } from "next-sanity/visual-editing";
+import { draftMode } from "next/headers";
+import { DisableDraftMode } from "@/components/DisableDraftMode";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -17,7 +20,10 @@ const geistMono = Geist_Mono({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const { data: config } = await sanityFetch({ query: SITE_CONFIG_QUERY });
+  const { data: config } = await sanityFetch({ 
+    query: SITE_CONFIG_QUERY,
+    stega: false // Critical: no stega for metadata
+  });
   return {
     title: {
         template: `%s | ${config?.title || "Bakery Chronicles"}`,
@@ -51,6 +57,12 @@ export default async function RootLayout({
             </div>
         </footer>
         <SanityLive />
+        {(await draftMode()).isEnabled && (
+          <>
+            <DisableDraftMode />
+            <VisualEditing />
+          </>
+        )}
       </body>
     </html>
   );

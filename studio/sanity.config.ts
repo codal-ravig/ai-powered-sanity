@@ -1,7 +1,11 @@
 import {defineConfig} from 'sanity'
 import {structureTool} from 'sanity/structure'
 import {visionTool} from '@sanity/vision'
+import {presentationTool} from 'sanity/presentation'
 import {schemaTypes} from './schemaTypes'
+import {resolve} from './presentation/resolve'
+
+const SANITY_STUDIO_PREVIEW_URL = process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000'
 
 export default defineConfig({
   name: 'default',
@@ -47,6 +51,15 @@ export default defineConfig({
           ]),
     }),
     visionTool(),
+    presentationTool({
+      resolve,
+      previewUrl: {
+        origin: SANITY_STUDIO_PREVIEW_URL,
+        previewMode: {
+          enable: '/api/draft-mode/enable',
+        },
+      },
+    }),
   ],
 
   schema: {

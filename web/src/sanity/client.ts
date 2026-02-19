@@ -7,7 +7,7 @@ export const client = createClient({
   useCdn: false,
   // Enable stega for Visual Editing
   stega: {
-    enabled: process.env.NEXT_PUBLIC_VERCEL_ENV === "preview",
-    studioUrl: "http://localhost:3333", // Update this if your studio is deployed
+    enabled: process.env.NEXT_PUBLIC_VERCEL_ENV === "preview" || process.env.NODE_ENV === "development",
+    studioUrl: process.env.NEXT_PUBLIC_SANITY_STUDIO_URL || "http://localhost:3333", 
   },
 });

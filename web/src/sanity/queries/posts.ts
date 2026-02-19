@@ -12,7 +12,7 @@ export const INITIAL_POSTS_QUERY = defineQuery(/* groq */ `
     "mainImage": mainImage.asset->url,
     imageUrl,
     "categories": categories[]->{_id, title, "slug": slug.current},
-    "mood": mood->{_id, title, slug, colorStart, colorEnd}
+    "mood": mood->{_id, title, slug, "colorStart": colorStart.hex, "colorEnd": colorEnd.hex}
   }
 `);
 
@@ -27,7 +27,7 @@ export const POST_QUERY = defineQuery(/* groq */ `
     "mainImage": mainImage.asset->url,
     imageUrl,
     "categories": categories[]->{_id, title, "slug": slug.current},
-    "mood": mood->{_id, title, colorStart, colorEnd},
+    "mood": mood->{_id, title, "colorStart": colorStart.hex, "colorEnd": colorEnd.hex},
     body,
     views
   }
@@ -45,6 +45,6 @@ export const SIMILAR_POSTS_QUERY = defineQuery(/* groq */ `
     publishedAt,
     "mainImage": mainImage.asset->url,
     imageUrl,
-    "mood": mood->{_id, title, colorStart, colorEnd}
+    "mood": mood->{_id, title, "colorStart": colorStart.hex, "colorEnd": colorEnd.hex}
   }
 `);

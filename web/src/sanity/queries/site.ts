@@ -22,8 +22,8 @@ export const MOODS_QUERY = defineQuery(/* groq */ `
     title,
     slug,
     description,
-    colorStart,
-    colorEnd
+    "colorStart": colorStart.hex,
+    "colorEnd": colorEnd.hex
   }
 `);
 

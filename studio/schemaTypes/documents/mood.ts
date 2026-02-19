@@ -29,23 +29,19 @@ export const mood = defineType({
     }),
     defineField({
       name: 'colorStart',
-      title: 'Gradient Start Color (Hex)',
-      type: 'string',
-      description: 'e.g. #FFD700',
-      validation: (rule) => rule.regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, {
-        name: 'hex color', // Error message is "Must be a valid hex color"
-        invert: false,
-      }),
+      title: 'Gradient Start Color',
+      type: 'color',
+      options: {
+        disableAlpha: true
+      }
     }),
     defineField({
       name: 'colorEnd',
-      title: 'Gradient End Color (Hex)',
-      type: 'string',
-      description: 'e.g. #FFA500',
-      validation: (rule) => rule.regex(/^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/, {
-        name: 'hex color',
-        invert: false,
-      }),
+      title: 'Gradient End Color',
+      type: 'color',
+      options: {
+        disableAlpha: true
+      }
     }),
   ],
 })

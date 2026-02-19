@@ -4,7 +4,9 @@ import {visionTool} from '@sanity/vision'
 import {presentationTool} from 'sanity/presentation'
 import {schemaTypes} from './schemaTypes'
 import {resolve} from './presentation/resolve'
-
+import {colorInput} from '@sanity/color-input'
+import {documentListWidget} from 'sanity-plugin-dashboard-widget-document-list'
+import {dashboardTool} from '@sanity/dashboard'
 const SANITY_STUDIO_PREVIEW_URL = process.env.SANITY_STUDIO_PREVIEW_URL || 'http://localhost:3000'
 
 export default defineConfig({
@@ -27,7 +29,7 @@ export default defineConfig({
                 S.document()
                   .schemaType('siteConfig')
                   .documentId('siteConfig')
-                  .title('Global Settings')
+                  .title('Global Settings'),
               ),
             S.listItem()
               .title('Home Page Editor')
@@ -36,7 +38,7 @@ export default defineConfig({
                 S.document()
                   .schemaType('homePage')
                   .documentId('homePage')
-                  .title('Home Page Editor')
+                  .title('Home Page Editor'),
               ),
             S.divider(),
             S.documentTypeListItem('post').title('Posts'),
@@ -46,11 +48,21 @@ export default defineConfig({
             S.documentTypeListItem('page').title('Generic Pages'),
             S.divider(),
             ...S.documentTypeListItems().filter(
-              (listItem) => !['post', 'person', 'category', 'location', 'page', 'siteConfig', 'homePage'].includes(listItem.getId() || '')
+              (listItem) =>
+                ![
+                  'post',
+                  'person',
+                  'category',
+                  'location',
+                  'page',
+                  'siteConfig',
+                  'homePage',
+                ].includes(listItem.getId() || ''),
             ),
           ]),
     }),
     visionTool(),
+    colorInput(),
     presentationTool({
       resolve,
       previewUrl: {
@@ -59,6 +71,20 @@ export default defineConfig({
           enable: '/api/draft-mode/enable',
         },
       },
+    }),
+    dashboardTool({
+      widgets: [
+        documentListWidget({
+          title: 'Some documents',
+          order: '_updatedAt desc',
+          types: ['post'],
+        }),
+         documentListWidget({
+          title: 'Others documents',
+          order: '_updatedAt desc',
+          types: ['category', 'location', 'people'],
+        }),
+      ],
     }),
   ],
 

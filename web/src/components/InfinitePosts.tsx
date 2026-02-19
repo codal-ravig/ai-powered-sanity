@@ -45,7 +45,7 @@ export function InfinitePosts({ initialPosts }: { initialPosts: INITIAL_POSTS_QU
         "mainImage": mainImage.asset->url,
         imageUrl,
         "categories": categories[]->{_id, title, "slug": slug.current},
-        "mood": mood->{_id, title, slug, colorStart, colorEnd}
+        "mood": mood->{_id, title, slug, "colorStart": colorStart.hex, "colorEnd": colorEnd.hex}
       }
     `;
 
@@ -99,7 +99,7 @@ export function InfinitePosts({ initialPosts }: { initialPosts: INITIAL_POSTS_QU
         "mainImage": mainImage.asset->url,
         imageUrl,
         "categories": categories[]->{_id, title, "slug": slug.current},
-        "mood": mood->{_id, title, slug, colorStart, colorEnd}
+        "mood": mood->{_id, title, slug, "colorStart": colorStart.hex, "colorEnd": colorEnd.hex}
       }
     `;
 
@@ -147,7 +147,7 @@ export function InfinitePosts({ initialPosts }: { initialPosts: INITIAL_POSTS_QU
         "mainImage": mainImage.asset->url,
         imageUrl,
         "categories": categories[]->{_id, title, "slug": slug.current},
-        "mood": mood->{_id, title, slug, colorStart, colorEnd}
+        "mood": mood->{_id, title, slug, "colorStart": colorStart.hex, "colorEnd": colorEnd.hex}
       }
     `;
 

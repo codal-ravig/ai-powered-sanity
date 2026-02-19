@@ -28,7 +28,20 @@ export const POST_QUERY = defineQuery(/* groq */ `
     imageUrl,
     "categories": categories[]->{_id, title, "slug": slug.current},
     "mood": mood->{_id, title, "colorStart": colorStart.hex, "colorEnd": colorEnd.hex},
-    body,
+    body[] {
+      ...,
+      _type == "image" => {
+        ...,
+        "asset": asset-> {
+          _id,
+          url,
+          metadata {
+            lqip,
+            dimensions
+          }
+        }
+      }
+    },
     views
   }
 `);

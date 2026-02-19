@@ -1,5 +1,5 @@
 import { client } from "@/sanity/client";
-import { PortableText } from "@portabletext/react";
+import { PortableText } from "@/components/PortableText";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowLeft, Calendar, User, Tag, MapPin, ChefHat, Eye } from "lucide-react";

@@ -1,11 +1,30 @@
-# Sanity Blogging Content Studio
+# Sanity Studio: my-bakery
 
-Congratulations, you have now installed the Sanity Content Studio, an open-source real-time content editing environment connected to the Sanity backend.
+This is the Sanity Studio for the **AI-Powered Sanity Project**. It provides a real-time editing environment for structured content, which is consumed by the Next.js frontend in the `/web` directory.
 
-Now you can do the following things:
+## 🚀 Development
 
-- [Read “getting started” in the docs](https://www.sanity.io/docs/introduction/getting-started?utm_source=readme)
-- Check out the example frontend: [React/Next.js](https://github.com/sanity-io/tutorial-sanity-blog-react-next)
-- [Read the blog post about this template](https://www.sanity.io/blog/build-your-own-blog-with-sanity-and-next-js?utm_source=readme)
-- [Join the Sanity community](https://www.sanity.io/community/join?utm_source=readme)
-- [Extend and build plugins](https://www.sanity.io/docs/content-studio/extending?utm_source=readme)
+```bash
+pnpm dev
+```
+Starts the Studio on `http://localhost:3333`.
+
+## 📦 Key Scripts
+
+- `pnpm seed`: Generates seed data using Faker.js (see `generate-seed.ts`).
+- `pnpm import:data`: Imports the generated seed data into the Sanity Content Lake.
+- `pnpm typegen`: Extracts schema and generates TypeScript types.
+- `pnpm deploy`: Deploys the Studio to Sanity hosting.
+
+## 📁 Structure
+
+- `schemaTypes/`: Defines the content models (documents and objects).
+- `migrations/`: Contains Sanity data migrations.
+- `presentation/`: Configuration for Sanity Presentation and Visual Editing.
+
+## 🛠 Plugins
+
+- `@sanity/color-input`: Visual color picker.
+- `@sanity/vision`: GROQ query playground.
+- `sanity-plugin-media`: Advanced media browser.
+- `sanity-plugin-dashboard-widget-document-list`: Dashboard shortcuts.
